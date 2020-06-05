@@ -178,7 +178,6 @@ public class JustPicture extends GameFrame
       EndDraw();
    }
 
-   @Override
    public boolean Initialize() {
       // TODO Auto-generated method stub
       return true;
