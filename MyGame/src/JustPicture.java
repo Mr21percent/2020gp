@@ -61,13 +61,6 @@ public class JustPicture extends GameFrame
 		p.height = 50;
 	   	return p;
 	}
-   public Enemy resetEnemy(Enemy e) {  // 플레이어 위치의 초기화를 담당하는 함수입니다.
-	    e.x = -40;
-		e.y = -80;
-		e.width = 40;
-		e.height = 80;
-	   	return e;
-	}
 
    	Player p;
 	Enemy e;
@@ -126,7 +119,7 @@ public class JustPicture extends GameFrame
 			if (inputs.buttons[3].isPressed == true) {        // r을 누르면 시작하기 전으로 돌아가기
 				state = GameState.Started;
 				p=resetPlayer(p);
-				e=resetEnemy(e);
+
 				break;
 			}
 			break;
