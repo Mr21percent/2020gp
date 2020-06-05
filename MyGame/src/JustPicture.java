@@ -61,6 +61,13 @@ public class JustPicture extends GameFrame
 		p.height = 50;
 	   	return p;
 	}
+   public Enemy resetEnemy(Enemy e) {  // 플레이어 위치의 초기화를 담당하는 함수입니다.
+	    e.x = -40;
+		e.y = -80;
+		e.width = 40;
+		e.height = 80;
+	   	return e;
+	}
 
    	Player p;
 	Enemy e;
@@ -119,6 +126,7 @@ public class JustPicture extends GameFrame
 			if (inputs.buttons[3].isPressed == true) {        // r을 누르면 시작하기 전으로 돌아가기
 				state = GameState.Started;
 				p=resetPlayer(p);
+				e=resetEnemy(e);
 				break;
 			}
 			break;
@@ -160,8 +168,11 @@ public class JustPicture extends GameFrame
    {
       BeginDraw();
       ClearScreen();
+      DrawString(10, 30, " Space를 눌러 게임을 시작합니다  ");
       DrawString(10, 50, " 공이 좌우로 움직입니다  ");
-      if (checkCrash(p,e)) DrawString(10, 200, " 충돌했어요 "); // 충돌시 잠시 충돌 했다고 출력
+      if (checkCrash(p,e)){
+    	  DrawString(10, 200, " 충돌했어요 "); // 충돌시 잠시 충돌 했다고 출력
+      }
       p.Draw(g);
       e.Draw(g);
       EndDraw();
