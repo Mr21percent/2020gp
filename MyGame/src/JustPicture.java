@@ -46,12 +46,14 @@ public class JustPicture extends GameFrame {
 		}
 	}
 
+
 	public boolean checkCrash(Player p, Enemy e) { // 충돌을 확인하는 함수입니다.
 		if (p.x + p.width >= e.x && p.x <= e.x + e.width)
 			if (p.y + p.height >= e.y && p.y <= e.y + e.height)
 				return true;
 		return false;
 	}
+
 
 	public Player resetPlayer(Player p) { // 플레이어 위치의 초기화를 담당하는 함수입니다.
 		p.x = 150;
@@ -68,7 +70,6 @@ public class JustPicture extends GameFrame {
 		e.height = 100;
 		return e;
 	}
-
 	public void OneGamePlayTime(long time) { // 플레이 시간 계산을 담당하는 함수입니다.
 		if (timeStamp_firstFrame == 0) // 이번이 첫 프레임이었다면 시작 시각 기록
 			timeStamp_firstFrame = time;
@@ -91,22 +92,21 @@ public class JustPicture extends GameFrame {
 		} else {
 			BestSec = BestTime % 60;
 		}
-		
+
 	}
 
 	Player p;
 	Enemy e;
+//	Bullet b;
 	GameState state = GameState.Started;
-
 	long timeStamp_firstFrame = 0; // 첫 프레임의 timeStamp -> 실행 이후로 경과된 시간 계산에 사용
 	long timeStamp_lastFrame = 0; // 직전 프레임의 timeStamp -> 물리량 계산에 사용
-	int PlayTime = 0;
-	int OneSec = 0;
-	int OneMit = 0;
-	int BestTime;
-	int BestSec;
-	int BestMit;
-
+	int PlayTime = 0; //플레이 시간을 말하고 있습니다
+	int OneSec = 0; //플레이 시간 초단위
+	int OneMit = 0; //플레이 시간 분단위
+	int BestTime; //최고 기록 을 의미합니다
+	int BestSec; //최고 기록 초를 의미합니다
+	int BestMit; //최고 기록 분을 의미합니다
 	public JustPicture(GameFrameSettings settings) {
 		super(settings);
 
@@ -117,10 +117,11 @@ public class JustPicture extends GameFrame {
 		inputs.BindKey(KeyEvent.VK_SPACE, 2);
 		inputs.BindKey(KeyEvent.VK_R, 3);
 
+
 		p = new Player();
 		e = new Enemy();
 	}
-	
+
 	public boolean Update(long timeStamp) {
 		inputs.AcceptInputs();
 		Random random = new Random();
@@ -135,8 +136,7 @@ public class JustPicture extends GameFrame {
 			break;
 
 		case Running:
-
-			OneGamePlayTime(timeStamp);  // 플레이 시간 저장
+			OneGamePlayTime(timeStamp);
 			p.state = PlayerState.Normal;
 			if (checkCrash(p, e) == true) // 장애물에 부딪히면 게임 종료
 				state = GameState.Finished;
@@ -148,14 +148,14 @@ public class JustPicture extends GameFrame {
 				p.state = PlayerState.Right;
 				break;
 			}
-
+			
 			break;
 
 		case Finished:
 			p.state = PlayerState.Normal; // 게임이 끝나면 공을 멈춤
 			BestGamePlayTime(); //베스트 플레이 갱
 			if (inputs.buttons[3].isPressed == true) { // r을 누르면 시작하기 전으로 돌아가기
-				state = GameState.Running;
+				state = GameState.Started;
 				p = resetPlayer(p);
 				e = resetEnemy(e);
 				timeStamp_firstFrame = 0; // 시간 초기화
@@ -167,15 +167,13 @@ public class JustPicture extends GameFrame {
 			break;
 
 		}
-		
-		
 
 		int speed = 10; // 좌 우로 움직이는 속도 조절
 		int rightMax = 350; // 우측으로의 최대 창 가로 크기 - 공 크기
 		int enemySpeed = 10; // 적이 내려오는 속도
-
+		int nando=1; //1초에 증가하는 enemySpeed
 		if (state == GameState.Running) // 게임을 시작하면 장애물이 내려옴
-		{
+		{	enemySpeed+=nando*(timeStamp_lastFrame-timeStamp_firstFrame)/1000; //1초에 속도 nando씩 증가
 			e.y += enemySpeed; // 적이 내려오는 속도
 			if (e.y > 600) {
 				e.y = 0;
@@ -204,28 +202,28 @@ public class JustPicture extends GameFrame {
 	public void Draw(long timeStamp) {
 		BeginDraw();
 		ClearScreen();
-		p.Draw(g);
-		e.Draw(g);
-
 		switch (state) {
 		case Started:
-			DrawString(10, 30, " Space를 눌러 게임을 시작합니다  ");
-			DrawString(10, 50, " 공이 좌우로 움직입니다  ");
-			break;
 		case Ready:
+			DrawString(10, 30, " Space를 눌러 게임을 시작합니다  ");
+			DrawString(10, 50, " a, d를 눌러 좌우로 움직이세요");
 			break;
 		case Running:
-			DrawString(10, 60, "   게임시작");
-			DrawString(10, 80, "Time %4d: %4d", OneMit, OneSec);
+			DrawString(10, 30, " 최대한 오래 버텨보세요  ");
+			DrawString(10, 50, "   게임시작");
+			DrawString(10, 70, "Time %4d: %4d", OneMit, OneSec);
+			p.Draw(g);
+			e.Draw(g);
 			break;
 		case Finished:
-			DrawString(150, 120, "충돌했어요 ");
+			DrawString(10, 70, " 충돌했어요 "); // 충돌시 잠시 충돌 했다고 출력
 			DrawString(150, 140, "Time %4d : %4d", OneMit, OneSec);
 			DrawString(150, 160, "BestPlay : %4d: %4d", BestMit, BestSec);
 			DrawString(150, 180, "R을 눌러 다시 시작  ");
+			p.Draw(g);
+			e.Draw(g);
 			break;
 		}
-
 		EndDraw();
 	}
 
