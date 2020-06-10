@@ -46,14 +46,12 @@ public class JustPicture extends GameFrame {
 		}
 	}
 
-
 	public boolean checkCrash(Player p, Enemy e) { // 충돌을 확인하는 함수입니다.
 		if (p.x + p.width >= e.x && p.x <= e.x + e.width)
 			if (p.y + p.height >= e.y && p.y <= e.y + e.height)
 				return true;
 		return false;
 	}
-
 
 	public Player resetPlayer(Player p) { // 플레이어 위치의 초기화를 담당하는 함수입니다.
 		p.x = 150;
@@ -70,27 +68,31 @@ public class JustPicture extends GameFrame {
 		e.height = 100;
 		return e;
 	}
+
 	public void OneGamePlayTime(long time) { // 플레이 시간 계산을 담당하는 함수입니다.
 		if (timeStamp_firstFrame == 0) // 이번이 첫 프레임이었다면 시작 시각 기록
 			timeStamp_firstFrame = time;
 		timeStamp_lastFrame = time; // 이제 '직전 프레임'이 될 이번 프레임의 시작 시각 기록
 		PlayTime = (int) (timeStamp_lastFrame - timeStamp_firstFrame) / 1000; // 플레이 시간 저장
 
-		if (PlayTime % 60 == 0 && OneSec != 0 && PlayTime != 0) { // 분,초 계산
+		if (PlayTime % 10 == 0 && OneSec != 0 && PlayTime != 0) { // 분,초 계산 // OneMit가 증가하는 것을 확인하기 위해 임의로 10진수로
+																	// 표시했습니다.=> 제출할때 60 진수로 변경
 			OneMit++;
 			OneSec = 0;
 		} else {
-			OneSec = PlayTime % 60;
+			OneSec = PlayTime % 10;
 		}
 	}
-	public void BestGamePlayTime() { // 가장 오랫동안 살아남은 게임의 시간을 저장합니다. 
-		if (BestTime < PlayTime)
+
+	public void BestGamePlayTime() { // 가장 오랫동안 살아남은 게임의 시간을 저장합니다.
+		if (BestTime < PlayTime) {
 			BestTime = PlayTime;
-		if (BestTime % 60 == 0 && BestSec != 0 && BestTime != 0) { // 분,초 계산
-			BestMit++;
-			BestSec = 0;
-		} else {
-			BestSec = BestTime % 60;
+			if (BestTime >= 10) { // 분,초 계산 // BestMit가 증가하는 것을 확인하기 위해 임의로 10진수로 표시했습니다.=> 제출할때 60 진수로 변경
+				BestMit = PlayTime / 10;
+				BestSec = PlayTime % 10;
+			} else {
+				BestSec = BestTime % 10;
+			}
 		}
 
 	}
@@ -101,12 +103,14 @@ public class JustPicture extends GameFrame {
 	GameState state = GameState.Started;
 	long timeStamp_firstFrame = 0; // 첫 프레임의 timeStamp -> 실행 이후로 경과된 시간 계산에 사용
 	long timeStamp_lastFrame = 0; // 직전 프레임의 timeStamp -> 물리량 계산에 사용
-	int PlayTime = 0; //플레이 시간을 말하고 있습니다
-	int OneSec = 0; //플레이 시간 초단위
-	int OneMit = 0; //플레이 시간 분단위
-	int BestTime; //최고 기록 을 의미합니다
-	int BestSec; //최고 기록 초를 의미합니다
-	int BestMit; //최고 기록 분을 의미합니다
+	int PlayTime = 0; // 플레이 시간을 말하고 있습니다
+	int OneSec = 0; // 플레이 시간 초단위
+	int OneMit = 0; // 플레이 시간 분단위
+	int BestTime; // 최고 기록 을 의미합니다
+	int BestSec; // 최고 기록 초를 의미합니다
+	int BestMit; // 최고 기록 분을 의미합니다
+	int enemySpeed; // 장애물의 스피드를 의미합니다.
+
 	public JustPicture(GameFrameSettings settings) {
 		super(settings);
 
@@ -116,7 +120,6 @@ public class JustPicture extends GameFrame {
 		inputs.BindKey(KeyEvent.VK_D, 1);
 		inputs.BindKey(KeyEvent.VK_SPACE, 2);
 		inputs.BindKey(KeyEvent.VK_R, 3);
-
 
 		p = new Player();
 		e = new Enemy();
@@ -148,12 +151,12 @@ public class JustPicture extends GameFrame {
 				p.state = PlayerState.Right;
 				break;
 			}
-			
+
 			break;
 
 		case Finished:
 			p.state = PlayerState.Normal; // 게임이 끝나면 공을 멈춤
-			BestGamePlayTime(); //베스트 플레이 갱
+			BestGamePlayTime(); // 베스트 플레이 갱
 			if (inputs.buttons[3].isPressed == true) { // r을 누르면 시작하기 전으로 돌아가기
 				state = GameState.Started;
 				p = resetPlayer(p);
@@ -170,10 +173,11 @@ public class JustPicture extends GameFrame {
 
 		int speed = 10; // 좌 우로 움직이는 속도 조절
 		int rightMax = 350; // 우측으로의 최대 창 가로 크기 - 공 크기
-		int enemySpeed = 10; // 적이 내려오는 속도
-		int nando=1; //1초에 증가하는 enemySpeed
+		enemySpeed = 10; // 적이 내려오는 속도
+		int nando = 1; // 1초에 증가하는 enemySpeed
 		if (state == GameState.Running) // 게임을 시작하면 장애물이 내려옴
-		{	enemySpeed+=nando*(timeStamp_lastFrame-timeStamp_firstFrame)/1000; //1초에 속도 nando씩 증가
+		{
+			enemySpeed += nando * (timeStamp_lastFrame - timeStamp_firstFrame) / 10000; // 10초에 속도 nando씩 증가
 			e.y += enemySpeed; // 적이 내려오는 속도
 			if (e.y > 600) {
 				e.y = 0;
@@ -202,6 +206,11 @@ public class JustPicture extends GameFrame {
 	public void Draw(long timeStamp) {
 		BeginDraw();
 		ClearScreen();
+		
+		if(PlayTime !=0 && PlayTime % 10==0) {    //10초마다 레벨 업 표시
+			DrawString(80, 90, "(Level Up!)");
+		}
+		
 		switch (state) {
 		case Started:
 		case Ready:
@@ -212,6 +221,7 @@ public class JustPicture extends GameFrame {
 			DrawString(10, 30, " 최대한 오래 버텨보세요  ");
 			DrawString(10, 50, "   게임시작");
 			DrawString(10, 70, "Time %4d: %4d", OneMit, OneSec);
+			DrawString(10, 90, "Speed : %d", enemySpeed);
 			p.Draw(g);
 			e.Draw(g);
 			break;
