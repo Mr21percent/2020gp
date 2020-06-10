@@ -79,41 +79,43 @@ public class JustPicture extends GameFrame {
 		timeStamp_lastFrame = time; // 이제 '직전 프레임'이 될 이번 프레임의 시작 시각 기록
 		PlayTime = (int) (timeStamp_lastFrame - timeStamp_firstFrame) / 1000; // 플레이 시간 저장
 
-		if (PlayTime % 10 == 0 && OneSec != 0 && PlayTime != 0) { // 분,초 계산 // OneMin가 증가하는 것을 확인하기 위해 임의로 10진수로 표시했습니다.=> 제출할때 60 진수로 변경
+		if (PlayTime % 10 == 0 && OneSec != 0 && PlayTime != 0) { // 분,초 계산 // OneMin가 증가하는 것을 확인하기 위해 임의로 10진수로
+																	// 표시했습니다.=> 제출할때 60 진수로 변경
 			OneMin++;
 			OneSec = 0;
 		} else {
 			OneSec = PlayTime % 10;
 		}
 	}
-	
+
 	public void BestGamePlayTime() { // BestGame을 갱신하는 메소드입니다.
 		if (BestTime < PlayTime) {
-			BestTime = PlayTime;
-		}
-		if (BestTime >= 10) { // 분,초 계산 // BestMin가 증가하는 것을 확인하기 위해 임의로 10진수로 표시했습니다.=> 제출할때 60 진수로 변경
-			BestMin = PlayTime / 10;
-			BestSec = PlayTime % 10;
-		} else {
-			BestSec = BestTime % 10;
+			{
+				BestTime = PlayTime;
+			}
+			if (BestTime >= 10) { // 분,초 계산 // BestMin가 증가하는 것을 확인하기 위해 임의로 10진수로 표시했습니다.=> 최종제출할때 60 진수로 변경
+				BestMin = PlayTime / 10;
+				BestSec = PlayTime % 10;
+			} else {
+				BestSec = BestTime % 10;
+			}
 		}
 	}
-	
-	String filename_save = "besttime.txt"; //BestGame의 시간을 저장하는 파일입니다.
-	
-	public void SaveBestGamePlayTime() //BestGame의 시간을 저장하는 메소드입니다. 이 메소드는 Running이 종료되기 직전에 불러옵니다.
+
+	String filename_save = "besttime.txt"; // BestGame의 시간을 저장하는 파일입니다.
+
+	public void SaveBestGamePlayTime() // BestGame의 시간을 저장하는 메소드입니다. 이 메소드는 Running이 종료되기 직전에 불러옵니다.
 	{
 		PrintStream ps;
 		try {
 			ps = new PrintStream(filename_save);
 			ps.println(BestTime);
-			System.out.println(BestTime);
 			ps.close();
 		} catch (FileNotFoundException e) {
 		}
 	}
-	
-	public void LoadBestGamePlayTime() //지난 게임의 BestPlayTime을 불러오는 메소드입니다. 이 메소드는 게임이 시작되기 전, 프로그램이 시작된 후 한번만 불러옵니다.
+
+	public void LoadBestGamePlayTime() // 지난 게임의 BestPlayTime을 불러오는 메소드입니다. 이 메소드는 게임이 시작되기 전, 프로그램이 시작된 후 한번만 불러옵니다.
 	{
 		FileInputStream is;
 		PlayTime = 0;
@@ -122,8 +124,7 @@ public class JustPicture extends GameFrame {
 			is = new FileInputStream(filename_save);
 			Scanner scanner = new Scanner(is);
 			BestTime = scanner.nextInt();
-			System.out.println(BestTime);
-			if (BestTime >= 10) { // 분,초 계산 // BestMin가 증가하는 것을 확인하기 위해 임의로 10진수로 표시했습니다.=> 제출할때 60 진수로 변경
+			if (BestTime >= 10) { // 분,초 계산 // BestMin가 증가하는 것을 확인하기 위해 임의로 10진수로 표시했습니다.=> 최종제출할때 60 진수로 변경
 				BestMin = PlayTime / 10;
 				BestSec = PlayTime % 10;
 			} else {
@@ -134,7 +135,6 @@ public class JustPicture extends GameFrame {
 			BestTime = PlayTime;
 		}
 	}
-	
 
 	Player p;
 	Enemy e;
@@ -163,7 +163,7 @@ public class JustPicture extends GameFrame {
 
 		p = new Player();
 		e = new Enemy();
-		
+
 		LoadBestGamePlayTime();
 	}
 
@@ -173,7 +173,7 @@ public class JustPicture extends GameFrame {
 
 		switch (state) {
 		case Started:
-			
+
 		case Ready:
 			if (inputs.buttons[2].IsPressedNow() == true) // space 를 누르면 게임시작
 				state = GameState.Running;
@@ -201,10 +201,10 @@ public class JustPicture extends GameFrame {
 
 		case Finished:
 			p.state = PlayerState.Normal; // 게임이 끝나면 공을 멈춤
-			if(inputs.buttons[4].isPressed == true) {
-				BestTime=0;
-				BestMin=0;
-				BestSec=0;
+			if (inputs.buttons[4].isPressed == true) {
+				BestTime = 0;
+				BestMin = 0;
+				BestSec = 0;
 				SaveBestGamePlayTime(); // 베스트 플레이를 저장합니다.
 			}
 			if (inputs.buttons[3].isPressed == true) { // r을 누르면 시작하기 전으로 돌아가기
@@ -227,7 +227,7 @@ public class JustPicture extends GameFrame {
 		int nando = 1; // 1초에 증가하는 enemySpeed
 		if (state == GameState.Running) // 게임을 시작하면 장애물이 내려옴s
 		{
-			enemySpeed += nando * PlayTime /10 ; // 10초에 속도 nando씩 증가
+			enemySpeed += nando * PlayTime / 10; // 10초에 속도 nando씩 증가
 			e.y += enemySpeed; // 적이 내려오는 속도
 			if (e.y > 600) {
 				e.y = 0;
@@ -256,11 +256,11 @@ public class JustPicture extends GameFrame {
 	public void Draw(long timeStamp) {
 		BeginDraw();
 		ClearScreen();
-		
-		if(PlayTime !=0 && PlayTime % 10==0) {    //10초마다 레벨 업 표시
+
+		if (PlayTime != 0 && PlayTime % 10 == 0) { // 10초마다 레벨 업 표시
 			DrawString(80, 90, "(Level Up!)");
 		}
-		
+
 		switch (state) {
 		case Started:
 		case Ready:
