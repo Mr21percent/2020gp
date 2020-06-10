@@ -1,6 +1,10 @@
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.PrintStream;
 import java.util.Random;
+import java.util.Scanner;
 
 import loot.*;
 import loot.graphics.DrawableObject;
@@ -69,33 +73,68 @@ public class JustPicture extends GameFrame {
 		return e;
 	}
 
-	public void OneGamePlayTime(long time) { // 플레이 시간 계산을 담당하는 함수입니다.
+	public void OneGamePlayTime(long time) { // 이번 게임의 플레이 시간 계산을 담당하는 함수입니다.
 		if (timeStamp_firstFrame == 0) // 이번이 첫 프레임이었다면 시작 시각 기록
 			timeStamp_firstFrame = time;
 		timeStamp_lastFrame = time; // 이제 '직전 프레임'이 될 이번 프레임의 시작 시각 기록
 		PlayTime = (int) (timeStamp_lastFrame - timeStamp_firstFrame) / 1000; // 플레이 시간 저장
 
-		if (PlayTime % 10 == 0 && OneSec != 0 && PlayTime != 0) { // 분,초 계산 // OneMit가 증가하는 것을 확인하기 위해 임의로 10진수로
-																	// 표시했습니다.=> 제출할때 60 진수로 변경
-			OneMit++;
+		if (PlayTime % 10 == 0 && OneSec != 0 && PlayTime != 0) { // 분,초 계산 // OneMin가 증가하는 것을 확인하기 위해 임의로 10진수로 표시했습니다.=> 제출할때 60 진수로 변경
+			OneMin++;
 			OneSec = 0;
 		} else {
 			OneSec = PlayTime % 10;
 		}
 	}
-
-	public void BestGamePlayTime() { // 가장 오랫동안 살아남은 게임의 시간을 저장합니다.
+	
+	public void BestGamePlayTime() { // BestGame을 갱신하는 메소드입니다.
 		if (BestTime < PlayTime) {
 			BestTime = PlayTime;
-			if (BestTime >= 10) { // 분,초 계산 // BestMit가 증가하는 것을 확인하기 위해 임의로 10진수로 표시했습니다.=> 제출할때 60 진수로 변경
-				BestMit = PlayTime / 10;
+		}
+		if (BestTime >= 10) { // 분,초 계산 // BestMin가 증가하는 것을 확인하기 위해 임의로 10진수로 표시했습니다.=> 제출할때 60 진수로 변경
+			BestMin = PlayTime / 10;
+			BestSec = PlayTime % 10;
+		} else {
+			BestSec = BestTime % 10;
+		}
+	}
+	
+	String filename_save = "besttime.txt"; //BestGame의 시간을 저장하는 파일입니다.
+	
+	public void SaveBestGamePlayTime() //BestGame의 시간을 저장하는 메소드입니다. 이 메소드는 Running이 종료되기 직전에 불러옵니다.
+	{
+		PrintStream ps;
+		try {
+			ps = new PrintStream(filename_save);
+			ps.println(BestTime);
+			System.out.println(BestTime);
+			ps.close();
+		} catch (FileNotFoundException e) {
+		}
+	}
+	
+	public void LoadBestGamePlayTime() //지난 게임의 BestPlayTime을 불러오는 메소드입니다. 이 메소드는 게임이 시작되기 전, 프로그램이 시작된 후 한번만 불러옵니다.
+	{
+		FileInputStream is;
+		PlayTime = 0;
+
+		try {
+			is = new FileInputStream(filename_save);
+			Scanner scanner = new Scanner(is);
+			BestTime = scanner.nextInt();
+			System.out.println(BestTime);
+			if (BestTime >= 10) { // 분,초 계산 // BestMin가 증가하는 것을 확인하기 위해 임의로 10진수로 표시했습니다.=> 제출할때 60 진수로 변경
+				BestMin = PlayTime / 10;
 				BestSec = PlayTime % 10;
 			} else {
 				BestSec = BestTime % 10;
 			}
+			scanner.close();
+		} catch (FileNotFoundException e) {
+			BestTime = PlayTime;
 		}
-
 	}
+	
 
 	Player p;
 	Enemy e;
@@ -105,10 +144,10 @@ public class JustPicture extends GameFrame {
 	long timeStamp_lastFrame = 0; // 직전 프레임의 timeStamp -> 물리량 계산에 사용
 	int PlayTime = 0; // 플레이 시간을 말하고 있습니다
 	int OneSec = 0; // 플레이 시간 초단위
-	int OneMit = 0; // 플레이 시간 분단위
+	int OneMin = 0; // 플레이 시간 분단위
 	int BestTime; // 최고 기록 을 의미합니다
 	int BestSec; // 최고 기록 초를 의미합니다
-	int BestMit; // 최고 기록 분을 의미합니다
+	int BestMin; // 최고 기록 분을 의미합니다
 	int enemySpeed; // 장애물의 스피드를 의미합니다.
 
 	public JustPicture(GameFrameSettings settings) {
@@ -120,9 +159,12 @@ public class JustPicture extends GameFrame {
 		inputs.BindKey(KeyEvent.VK_D, 1);
 		inputs.BindKey(KeyEvent.VK_SPACE, 2);
 		inputs.BindKey(KeyEvent.VK_R, 3);
+		inputs.BindKey(KeyEvent.VK_F, 4);
 
 		p = new Player();
 		e = new Enemy();
+		
+		LoadBestGamePlayTime();
 	}
 
 	public boolean Update(long timeStamp) {
@@ -131,9 +173,8 @@ public class JustPicture extends GameFrame {
 
 		switch (state) {
 		case Started:
-
+			
 		case Ready:
-
 			if (inputs.buttons[2].IsPressedNow() == true) // space 를 누르면 게임시작
 				state = GameState.Running;
 			break;
@@ -142,7 +183,11 @@ public class JustPicture extends GameFrame {
 			OneGamePlayTime(timeStamp);
 			p.state = PlayerState.Normal;
 			if (checkCrash(p, e) == true) // 장애물에 부딪히면 게임 종료
+			{
+				BestGamePlayTime(); // 베스트 플레이를 갱신합니다.
+				SaveBestGamePlayTime(); // 베스트 플레이를 저장합니다.
 				state = GameState.Finished;
+			}
 			if (inputs.buttons[0].isPressed == true) { // a를 누르면 왼쪽으로 이동
 				p.state = PlayerState.Left;
 				break;
@@ -156,14 +201,19 @@ public class JustPicture extends GameFrame {
 
 		case Finished:
 			p.state = PlayerState.Normal; // 게임이 끝나면 공을 멈춤
-			BestGamePlayTime(); // 베스트 플레이 갱
+			if(inputs.buttons[4].isPressed == true) {
+				BestTime=0;
+				BestMin=0;
+				BestSec=0;
+				SaveBestGamePlayTime(); // 베스트 플레이를 저장합니다.
+			}
 			if (inputs.buttons[3].isPressed == true) { // r을 누르면 시작하기 전으로 돌아가기
 				state = GameState.Started;
 				p = resetPlayer(p);
 				e = resetEnemy(e);
 				timeStamp_firstFrame = 0; // 시간 초기화
 				timeStamp_lastFrame = 0;
-				OneMit = 0;
+				OneMin = 0;
 				OneSec = 0;
 				break;
 			}
@@ -175,9 +225,9 @@ public class JustPicture extends GameFrame {
 		int rightMax = 350; // 우측으로의 최대 창 가로 크기 - 공 크기
 		enemySpeed = 10; // 적이 내려오는 속도
 		int nando = 1; // 1초에 증가하는 enemySpeed
-		if (state == GameState.Running) // 게임을 시작하면 장애물이 내려옴
+		if (state == GameState.Running) // 게임을 시작하면 장애물이 내려옴s
 		{
-			enemySpeed += nando * (timeStamp_lastFrame - timeStamp_firstFrame) / 10000; // 10초에 속도 nando씩 증가
+			enemySpeed += nando * PlayTime /10 ; // 10초에 속도 nando씩 증가
 			e.y += enemySpeed; // 적이 내려오는 속도
 			if (e.y > 600) {
 				e.y = 0;
@@ -216,20 +266,22 @@ public class JustPicture extends GameFrame {
 		case Ready:
 			DrawString(10, 30, " Space를 눌러 게임을 시작합니다  ");
 			DrawString(10, 50, " a, d를 눌러 좌우로 움직이세요");
+			DrawString(10, 70, "BestPlay : %4d: %4d", BestMin, BestSec);
 			break;
 		case Running:
 			DrawString(10, 30, " 최대한 오래 버텨보세요  ");
 			DrawString(10, 50, "   게임시작");
-			DrawString(10, 70, "Time %4d: %4d", OneMit, OneSec);
+			DrawString(10, 70, "Time %4d: %4d(minute가 증가하는 것을 확인하기 위한 일시적 10진수 표현)", OneMin, OneSec);
 			DrawString(10, 90, "Speed : %d", enemySpeed);
 			p.Draw(g);
 			e.Draw(g);
 			break;
 		case Finished:
 			DrawString(10, 70, " 충돌했어요 "); // 충돌시 잠시 충돌 했다고 출력
-			DrawString(150, 140, "Time %4d : %4d", OneMit, OneSec);
-			DrawString(150, 160, "BestPlay : %4d: %4d", BestMit, BestSec);
-			DrawString(150, 180, "R을 눌러 다시 시작  ");
+			DrawString(10, 140, "Time %2d : %2d", OneMin, OneSec);
+			DrawString(10, 160, "BestPlay : %2d: %2d", BestMin, BestSec);
+			DrawString(10, 180, "F를 누르면 BestPlay가 초기화 됩니다.");
+			DrawString(10, 200, "R을 눌러 다시 시작  ");
 			p.Draw(g);
 			e.Draw(g);
 			break;
