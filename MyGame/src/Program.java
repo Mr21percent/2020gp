@@ -7,7 +7,7 @@ public class Program
 
 	public static void main(String[] args)
 	{
-		int mode = 2;
+		int mode = 1;
 		
 		if ( mode == 1 )
 		{

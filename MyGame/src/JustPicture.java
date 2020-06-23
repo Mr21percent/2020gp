@@ -1,10 +1,13 @@
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.Random;
 import java.util.Scanner;
+import loot.GameFrame;
+import loot.GameFrameSettings;
 
 import loot.*;
 import loot.graphics.DrawableObject;
@@ -23,6 +26,7 @@ public class JustPicture extends GameFrame {
 		Running, // 게임이 시작된 상태
 		Finished // 게임 종료
 	}
+	
 
 	class Player extends DrawableObject {
 		public PlayerState state;
@@ -49,6 +53,15 @@ public class JustPicture extends GameFrame {
 			image = images.GetImage("enemy");
 		}
 	}
+	class BackgroundRoad extends DrawableObject { //배경의 움직임을 위해 추가됨
+		public BackgroundRoad() {
+			x = 0;
+			y = 0;
+			width = 400;
+			height = 1200;
+			image = images.GetImage("road");
+		}
+	}
 
 	public boolean checkCrash(Player p, Enemy e) { // 충돌을 확인하는 함수입니다.
 		if (p.x + p.width >= e.x && p.x <= e.x + e.width)
@@ -70,6 +83,13 @@ public class JustPicture extends GameFrame {
 		e.y = 0;
 		e.width = 50;
 		e.height = 100;
+		return e;
+	}
+	public BackgroundRoad resetBackgroundRoad(BackgroundRoad e) { // 플레이어 위치의 초기화를 담당하는 함수입니다.
+		e.x = 0;
+		e.y = -600;
+		e.width = 400;
+		e.height = 1200;
 		return e;
 	}
 
@@ -138,6 +158,7 @@ public class JustPicture extends GameFrame {
 
 	Player p;
 	Enemy e;
+	BackgroundRoad bg;
 //	Bullet b;
 	GameState state = GameState.Started;
 	long timeStamp_firstFrame = 0; // 첫 프레임의 timeStamp -> 실행 이후로 경과된 시간 계산에 사용
@@ -155,6 +176,7 @@ public class JustPicture extends GameFrame {
 
 		images.LoadImage("Images/ball.png", "player");
 		images.LoadImage("Images/car.png", "enemy");
+		images.LoadImage("Images/road.png", "road");
 		inputs.BindKey(KeyEvent.VK_A, 0);
 		inputs.BindKey(KeyEvent.VK_D, 1);
 		inputs.BindKey(KeyEvent.VK_SPACE, 2);
@@ -163,7 +185,8 @@ public class JustPicture extends GameFrame {
 
 		p = new Player();
 		e = new Enemy();
-
+		bg = new BackgroundRoad();
+		
 		LoadBestGamePlayTime();
 	}
 
@@ -233,6 +256,10 @@ public class JustPicture extends GameFrame {
 				e.y = 0;
 				e.x = random.nextInt(10) * e.width;
 			}
+			bg.y += enemySpeed*2;
+			if (bg.y > 0) {
+				bg.y = -600;
+			}
 		}
 
 		switch (p.state) { // 캐릭터의 움직임을 출력합니다.
@@ -273,8 +300,10 @@ public class JustPicture extends GameFrame {
 			DrawString(10, 50, "   게임시작");
 			DrawString(10, 70, "Time %4d: %4d(minute가 증가하는 것을 확인하기 위한 일시적 10진수 표현)", OneMin, OneSec);
 			DrawString(10, 90, "Speed : %d", enemySpeed);
+			bg.Draw(g);
 			p.Draw(g);
 			e.Draw(g);
+			
 			break;
 		case Finished:
 			DrawString(10, 70, " 충돌했어요 "); // 충돌시 잠시 충돌 했다고 출력
