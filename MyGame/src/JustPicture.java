@@ -28,6 +28,7 @@ public class JustPicture extends GameFrame {
 	}
 	
 
+	
 	class Player extends DrawableObject {
 		public PlayerState state;
 
@@ -182,7 +183,7 @@ public class JustPicture extends GameFrame {
 		inputs.BindKey(KeyEvent.VK_SPACE, 2);
 		inputs.BindKey(KeyEvent.VK_R, 3);
 		inputs.BindKey(KeyEvent.VK_F, 4);
-
+		audios.LoadAudio("Audios/sample.wav", "sample", 1);
 		p = new Player();
 		e = new Enemy();
 		bg = new BackgroundRoad();
@@ -209,6 +210,7 @@ public class JustPicture extends GameFrame {
 			{
 				BestGamePlayTime(); // 베스트 플레이를 갱신합니다.
 				SaveBestGamePlayTime(); // 베스트 플레이를 저장합니다.
+				audios.Play("sample");
 				state = GameState.Finished;
 			}
 			if (inputs.buttons[0].isPressed == true) { // a를 누르면 왼쪽으로 이동
