@@ -26,9 +26,7 @@ public class JustPicture extends GameFrame {
 		Running, // 게임이 시작된 상태
 		Finished // 게임 종료
 	}
-	
 
-	
 	class Player extends DrawableObject {
 		public PlayerState state;
 
@@ -44,17 +42,22 @@ public class JustPicture extends GameFrame {
 		}
 	}
 
-	class Enemy extends DrawableObject {
-		public Enemy() {
-			x = 180;
-			y = -80;
-			width = 50;
-			height = 100;
+	static final int Enemy_width = 50; // 장애물의 가로 길이(단위는 픽셀)
+	static final int Enemy_heigth = 100; // 장애물의 세로 길이(단위는 픽셀)
 
-			image = images.GetImage("enemy");
+	class Enemy extends DrawableObject {
+
+		public double e_x;
+		public double e_y;
+
+		public Enemy(int x, int y) { // 장애물 생성자
+			super(x, y, Enemy_width, Enemy_heigth, images.GetImage("enemy"));
+			e_x = x;
+			e_y = y;
 		}
 	}
-	class BackgroundRoad extends DrawableObject { //배경의 움직임을 위해 추가됨
+
+	class BackgroundRoad extends DrawableObject { // 배경의 움직임을 위해 추가됨
 		public BackgroundRoad() {
 			x = 0;
 			y = 0;
@@ -79,20 +82,10 @@ public class JustPicture extends GameFrame {
 		return p;
 	}
 
-	public Enemy resetEnemy(Enemy e) { // 플레이어 위치의 초기화를 담당하는 함수입니다.
-		e.x = 0;
-		e.y = 0;
-		e.width = 50;
-		e.height = 100;
-		return e;
-	}
-	public BackgroundRoad resetBackgroundRoad(BackgroundRoad e) { // 플레이어 위치의 초기화를 담당하는 함수입니다.
-		e.x = 0;
-		e.y = -600;
-		e.width = 400;
-		e.height = 1200;
-		return e;
-	}
+	 public BackgroundRoad resetBackgroundRoad(BackgroundRoad e) { // 플레이어 위치의 초기화를 담당하는 함수입니다. 
+	 e.x = 0; e.y = -600; e.width = 400; e.height = 1200;
+	 return e; }
+	 
 
 	public void OneGamePlayTime(long time) { // 이번 게임의 플레이 시간 계산을 담당하는 함수입니다.
 		if (timeStamp_firstFrame == 0) // 이번이 첫 프레임이었다면 시작 시각 기록
@@ -110,10 +103,11 @@ public class JustPicture extends GameFrame {
 	}
 
 	public void BestGamePlayTime() { // BestGame을 갱신하는 메소드입니다.
+		System.out.println("갱신전 최고 시간은 : "+BestTime);
 		if (BestTime < PlayTime) {
-			{
-				BestTime = PlayTime;
-			}
+			
+			BestTime = PlayTime;
+			
 			if (BestTime >= 10) { // 분,초 계산 // BestMin가 증가하는 것을 확인하기 위해 임의로 10진수로 표시했습니다.=> 최종제출할때 60 진수로 변경
 				BestMin = PlayTime / 10;
 				BestSec = PlayTime % 10;
@@ -145,15 +139,15 @@ public class JustPicture extends GameFrame {
 			is = new FileInputStream(filename_save);
 			Scanner scanner = new Scanner(is);
 			BestTime = scanner.nextInt();
-			if (BestTime >= 10) { // 분,초 계산 // BestMin가 증가하는 것을 확인하기 위해 임의로 10진수로 표시했습니다.=> 최종제출할때 60 진수로 변경
-				BestMin = PlayTime / 10;
-				BestSec = PlayTime % 10;
-			} else {
-				BestSec = BestTime % 10;
-			}
 			scanner.close();
 		} catch (FileNotFoundException e) {
 			BestTime = PlayTime;
+		}
+		if (BestTime >= 10) { // 분,초 계산 // BestMin가 증가하는 것을 확인하기 위해 임의로 10진수로 표시했습니다.=> 최종제출할때 60 진수로 변경
+			BestMin = BestTime / 10;
+			BestSec = BestTime % 10;
+		} else {
+			BestSec = BestTime % 10;
 		}
 	}
 
@@ -171,6 +165,8 @@ public class JustPicture extends GameFrame {
 	int BestSec; // 최고 기록 초를 의미합니다
 	int BestMin; // 최고 기록 분을 의미합니다
 	int enemySpeed; // 장애물의 스피드를 의미합니다.
+	int numberOfEnemys = 5; // 장애물의 숫자
+	Enemy[] enemys = new Enemy[numberOfEnemys]; // 장애물이 들어있는 배열
 
 	public JustPicture(GameFrameSettings settings) {
 		super(settings);
@@ -185,10 +181,19 @@ public class JustPicture extends GameFrame {
 		inputs.BindKey(KeyEvent.VK_F, 4);
 		audios.LoadAudio("Audios/sample.wav", "sample", 1);
 		p = new Player();
-		e = new Enemy();
 		bg = new BackgroundRoad();
-		
 		LoadBestGamePlayTime();
+	}
+
+	public boolean Initialize() {
+		Random random = new Random();
+		for (int i = 0; i < enemys.length; ++i) {
+			int x = random.nextInt(8) * Enemy_width;
+			enemys[i] = new Enemy(x, -300 * i); // 장애물을 x자리 랜덤, y자리 -100으로 생성됩니다.
+
+		}
+		
+		return true;
 	}
 
 	public boolean Update(long timeStamp) {
@@ -206,12 +211,14 @@ public class JustPicture extends GameFrame {
 		case Running:
 			OneGamePlayTime(timeStamp);
 			p.state = PlayerState.Normal;
-			if (checkCrash(p, e) == true) // 장애물에 부딪히면 게임 종료
-			{
-				BestGamePlayTime(); // 베스트 플레이를 갱신합니다.
-				SaveBestGamePlayTime(); // 베스트 플레이를 저장합니다.
-				audios.Play("sample");
-				state = GameState.Finished;
+			for (int i = 0; i < numberOfEnemys; ++i) {
+				if (checkCrash(p, enemys[i]) == true) // 장애물에 부딪히면 게임 종료
+				{
+					BestGamePlayTime(); // 베스트 플레이를 갱신합니다.
+					SaveBestGamePlayTime(); // 베스트 플레이를 저장합니다.
+					audios.Play("sample");
+					state = GameState.Finished;
+				}
 			}
 			if (inputs.buttons[0].isPressed == true) { // a를 누르면 왼쪽으로 이동
 				p.state = PlayerState.Left;
@@ -226,7 +233,7 @@ public class JustPicture extends GameFrame {
 
 		case Finished:
 			p.state = PlayerState.Normal; // 게임이 끝나면 공을 멈춤
-			if (inputs.buttons[4].isPressed == true) {
+			if (inputs.buttons[4].isPressed == true) {  //f를 누르면  베스트타임을 리셋합니다.
 				BestTime = 0;
 				BestMin = 0;
 				BestSec = 0;
@@ -235,7 +242,7 @@ public class JustPicture extends GameFrame {
 			if (inputs.buttons[3].isPressed == true) { // r을 누르면 시작하기 전으로 돌아가기
 				state = GameState.Started;
 				p = resetPlayer(p);
-				e = resetEnemy(e);
+				Initialize();
 				timeStamp_firstFrame = 0; // 시간 초기화
 				timeStamp_lastFrame = 0;
 				OneMin = 0;
@@ -253,12 +260,26 @@ public class JustPicture extends GameFrame {
 		if (state == GameState.Running) // 게임을 시작하면 장애물이 내려옴s
 		{
 			enemySpeed += nando * PlayTime / 10; // 10초에 속도 nando씩 증가
-			e.y += enemySpeed; // 적이 내려오는 속도
-			if (e.y > 600) {
-				e.y = 0;
-				e.x = random.nextInt(10) * e.width;
+
+			for (int i = 0; i < numberOfEnemys; ++i) {
+				if (enemys[i].e_y > 600) {
+					enemys[i].e_y = -100;
+					enemys[i].e_x = random.nextInt(8) * Enemy_width;
+				}
+
+				// 전 장애물과 150 이상 간격이 떨어져 있는지 확인한 후 새로운 장애물을 출력합니다.
+				if (i == 0 && enemys[i].e_y <= enemys[numberOfEnemys - 1].e_y && enemys[numberOfEnemys - 1].e_y < 150)
+					enemys[0].e_y = -100;
+				else if (i != 0 && enemys[i].e_y <= enemys[i - 1].e_y && enemys[i - 1].e_y < 150)
+					enemys[i].e_y = -100;
+				else
+					enemys[i].e_y += enemySpeed; // 장애물이 내려오는 속도는 난이도를 고려합니다.
+
+				enemys[i].x = (int) enemys[i].e_x; // 계산한 값을 x에 대입합니다.
+				enemys[i].y = (int) enemys[i].e_y; // 계산한 값을 y에 대입합니다.
 			}
-			bg.y += enemySpeed*2;
+
+			bg.y += enemySpeed * 2;
 			if (bg.y > 0) {
 				bg.y = -600;
 			}
@@ -304,8 +325,10 @@ public class JustPicture extends GameFrame {
 			DrawString(10, 90, "Speed : %d", enemySpeed);
 			bg.Draw(g);
 			p.Draw(g);
-			e.Draw(g);
-			
+			for (int i = 0; i < numberOfEnemys; ++i) { // 모든 장애물을 출력합니다.
+				enemys[i].Draw(g);
+			}
+
 			break;
 		case Finished:
 			DrawString(10, 70, " 충돌했어요 "); // 충돌시 잠시 충돌 했다고 출력
@@ -314,15 +337,12 @@ public class JustPicture extends GameFrame {
 			DrawString(10, 180, "F를 누르면 BestPlay가 초기화 됩니다.");
 			DrawString(10, 200, "R을 눌러 다시 시작  ");
 			p.Draw(g);
-			e.Draw(g);
+			for (int i = 0; i < numberOfEnemys; ++i) { // 모든 장애물을 출력합니다.
+				enemys[i].Draw(g);
+			}
 			break;
 		}
 		EndDraw();
-	}
-
-	public boolean Initialize() {
-		// TODO Auto-generated method stub
-		return true;
 	}
 
 }
