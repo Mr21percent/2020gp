@@ -224,13 +224,15 @@ public class JustPicture extends GameFrame {
 				p.state = PlayerState.Left;
 				break;
 			}
-			if (inputs.buttons[1].isPressed == true) { // d를 누르면 오른쪽으로 이동
+			else if (inputs.buttons[1].isPressed == true) { // d를 누르면 오른쪽으로 이동
 				p.state = PlayerState.Right;
 				break;
 			}
-
-			break;
-
+			else {
+				p.state=PlayerState.Normal;
+				break;
+			}
+			
 		case Finished:
 			p.state = PlayerState.Normal; // 게임이 끝나면 공을 멈춤
 			if (inputs.buttons[4].isPressed == true) {  //f를 누르면  베스트타임을 리셋합니다.
@@ -291,12 +293,12 @@ public class JustPicture extends GameFrame {
 		case Left:
 			p.x -= speed;
 			if (p.x < 0)
-				p.x += speed;
+				p.x =0;
 			break;
 		case Right:
 			p.x += speed;
 			if (p.x > rightMax)
-				p.x -= speed;
+				p.x=rightMax;
 			break;
 		}
 
@@ -307,9 +309,7 @@ public class JustPicture extends GameFrame {
 		BeginDraw();
 		ClearScreen();
 
-		if (PlayTime != 0 && PlayTime % 10 == 0) { // 10초마다 레벨 업 표시
-			DrawString(80, 90, "(Level Up!)");
-		}
+		
 
 		switch (state) {
 		case Started:
@@ -320,6 +320,9 @@ public class JustPicture extends GameFrame {
 			break;
 		case Running:
 			bg.Draw(g);
+			if (PlayTime != 0 && PlayTime % 10 == 0) { // 10초마다 레벨 업 표시
+				DrawString(130, 90, "(Level Up!)");
+			}
 			DrawString(50, 30, "최대한 오래 버텨보세요  ");
 			DrawString(50, 50, "게임시작");
 			DrawString(50, 70, "Time %4d: %4d", OneMin, OneSec);
