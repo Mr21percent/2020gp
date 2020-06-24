@@ -103,14 +103,13 @@ public class JustPicture extends GameFrame {
 	}
 
 	public void BestGamePlayTime() { // BestGame을 갱신하는 메소드입니다.
-		System.out.println("갱신전 최고 시간은 : "+BestTime);
 		if (BestTime < PlayTime) {
 			
 			BestTime = PlayTime;
 			
 			if (BestTime >= 60) { // 분,초 계산 // BestMin가 증가하는 것을 확인하기 위해 임의로 10진수로 표시했습니다.=> 최종제출할때 60 진수로 변경
-				BestMin = PlayTime / 60;
-				BestSec = PlayTime % 60;
+				BestMin = BestTime / 60;
+				BestSec = BestTime % 60;
 			} else {
 				BestSec = BestTime % 60;
 			}
