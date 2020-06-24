@@ -93,12 +93,12 @@ public class JustPicture extends GameFrame {
 		timeStamp_lastFrame = time; // 이제 '직전 프레임'이 될 이번 프레임의 시작 시각 기록
 		PlayTime = (int) (timeStamp_lastFrame - timeStamp_firstFrame) / 1000; // 플레이 시간 저장
 
-		if (PlayTime % 10 == 0 && OneSec != 0 && PlayTime != 0) { // 분,초 계산 // OneMin가 증가하는 것을 확인하기 위해 임의로 10진수로
+		if (PlayTime % 60 == 0 && OneSec != 0 && PlayTime != 0) { // 분,초 계산 // OneMin가 증가하는 것을 확인하기 위해 임의로 10진수로
 																	// 표시했습니다.=> 제출할때 60 진수로 변경
 			OneMin++;
 			OneSec = 0;
 		} else {
-			OneSec = PlayTime % 10;
+			OneSec = PlayTime % 60;
 		}
 	}
 
@@ -108,11 +108,11 @@ public class JustPicture extends GameFrame {
 			
 			BestTime = PlayTime;
 			
-			if (BestTime >= 10) { // 분,초 계산 // BestMin가 증가하는 것을 확인하기 위해 임의로 10진수로 표시했습니다.=> 최종제출할때 60 진수로 변경
-				BestMin = PlayTime / 10;
-				BestSec = PlayTime % 10;
+			if (BestTime >= 60) { // 분,초 계산 // BestMin가 증가하는 것을 확인하기 위해 임의로 10진수로 표시했습니다.=> 최종제출할때 60 진수로 변경
+				BestMin = PlayTime / 60;
+				BestSec = PlayTime % 60;
 			} else {
-				BestSec = BestTime % 10;
+				BestSec = BestTime % 60;
 			}
 		}
 	}
@@ -143,7 +143,7 @@ public class JustPicture extends GameFrame {
 		} catch (FileNotFoundException e) {
 			BestTime = PlayTime;
 		}
-		if (BestTime >= 10) { // 분,초 계산 // BestMin가 증가하는 것을 확인하기 위해 임의로 10진수로 표시했습니다.=> 최종제출할때 60 진수로 변경
+		if (BestTime >= 60) { // 분,초 계산 // BestMin가 증가하는 것을 확인하기 위해 임의로 10진수로 표시했습니다.=> 최종제출할때 60 진수로 변경
 			BestMin = BestTime / 60;
 			BestSec = BestTime % 60;
 		} else {
@@ -314,16 +314,16 @@ public class JustPicture extends GameFrame {
 		switch (state) {
 		case Started:
 		case Ready:
-			DrawString(10, 30, " Space를 눌러 게임을 시작합니다  ");
-			DrawString(10, 50, " a, d를 눌러 좌우로 움직이세요");
+			DrawString(10, 30, "Space를 눌러 게임을 시작합니다  ");
+			DrawString(10, 50, "a, d를 눌러 좌우로 움직이세요");
 			DrawString(10, 70, "BestPlay : %4d: %4d", BestMin, BestSec);
 			break;
 		case Running:
-			DrawString(10, 30, " 최대한 오래 버텨보세요  ");
-			DrawString(10, 50, "   게임시작");
-			DrawString(10, 70, "Time %4d: %4d(minute가 증가하는 것을 확인하기 위한 일시적 10진수 표현)", OneMin, OneSec);
-			DrawString(10, 90, "Speed : %d", enemySpeed);
 			bg.Draw(g);
+			DrawString(50, 30, "최대한 오래 버텨보세요  ");
+			DrawString(50, 50, "게임시작");
+			DrawString(50, 70, "Time %4d: %4d", OneMin, OneSec);
+			DrawString(50, 90, "Speed : %d", enemySpeed);
 			p.Draw(g);
 			for (int i = 0; i < numberOfEnemys; ++i) { // 모든 장애물을 출력합니다.
 				enemys[i].Draw(g);
@@ -335,12 +335,12 @@ public class JustPicture extends GameFrame {
 			p.Draw(g);
 			for (int i = 0; i < numberOfEnemys; ++i) { // 모든 장애물을 출력합니다.
 				enemys[i].Draw(g);
-			}
-			DrawString(10, 70, " 충돌했어요 "); // 충돌시 잠시 충돌 했다고 출력
-			DrawString(10, 140, "Time %2d : %2d", OneMin, OneSec);
-			DrawString(10, 160, "BestPlay : %2d: %2d", BestMin, BestSec);
-			DrawString(10, 180, "F를 누르면 BestPlay가 초기화 됩니다.");
-			DrawString(10, 200, "R을 눌러 다시 시작  ");   
+			}  
+			DrawString(50, 30, "충돌했어요 "); // 충돌시 잠시 충돌 했다고 출력
+			DrawString(50, 70, "Time %2d : %2d", OneMin, OneSec);
+			DrawString(50, 90, "BestPlay : %2d: %2d", BestMin, BestSec);
+			DrawString(50, 150, "F를 누르면 BestPlay가 초기화 됩니다.");
+			DrawString(50, 170, "R을 눌러 다시 시작  ");   
 			break;
 		}
 		EndDraw();
