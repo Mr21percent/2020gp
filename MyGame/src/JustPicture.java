@@ -144,10 +144,10 @@ public class JustPicture extends GameFrame {
 			BestTime = PlayTime;
 		}
 		if (BestTime >= 10) { // 분,초 계산 // BestMin가 증가하는 것을 확인하기 위해 임의로 10진수로 표시했습니다.=> 최종제출할때 60 진수로 변경
-			BestMin = BestTime / 10;
-			BestSec = BestTime % 10;
+			BestMin = BestTime / 60;
+			BestSec = BestTime % 60;
 		} else {
-			BestSec = BestTime % 10;
+			BestSec = BestTime % 60;
 		}
 	}
 
@@ -331,7 +331,7 @@ public class JustPicture extends GameFrame {
 
 			break;
 		case Finished:
-			
+			bg.Draw(g);
 			p.Draw(g);
 			for (int i = 0; i < numberOfEnemys; ++i) { // 모든 장애물을 출력합니다.
 				enemys[i].Draw(g);
