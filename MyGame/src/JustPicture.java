@@ -179,7 +179,7 @@ public class JustPicture extends GameFrame {
 		inputs.BindKey(KeyEvent.VK_SPACE, 2);
 		inputs.BindKey(KeyEvent.VK_R, 3);
 		inputs.BindKey(KeyEvent.VK_F, 4);
-		audios.LoadAudio("Audios/sample.wav", "sample", 1);
+		audios.LoadAudio("Audios/media.io_sound.wav", "sample", 1);
 		p = new Player();
 		bg = new BackgroundRoad();
 		LoadBestGamePlayTime();
@@ -331,15 +331,16 @@ public class JustPicture extends GameFrame {
 
 			break;
 		case Finished:
-			DrawString(10, 70, " 충돌했어요 "); // 충돌시 잠시 충돌 했다고 출력
-			DrawString(10, 140, "Time %2d : %2d", OneMin, OneSec);
-			DrawString(10, 160, "BestPlay : %2d: %2d", BestMin, BestSec);
-			DrawString(10, 180, "F를 누르면 BestPlay가 초기화 됩니다.");
-			DrawString(10, 200, "R을 눌러 다시 시작  ");
+			
 			p.Draw(g);
 			for (int i = 0; i < numberOfEnemys; ++i) { // 모든 장애물을 출력합니다.
 				enemys[i].Draw(g);
 			}
+			DrawString(10, 70, " 충돌했어요 "); // 충돌시 잠시 충돌 했다고 출력
+			DrawString(10, 140, "Time %2d : %2d", OneMin, OneSec);
+			DrawString(10, 160, "BestPlay : %2d: %2d", BestMin, BestSec);
+			DrawString(10, 180, "F를 누르면 BestPlay가 초기화 됩니다.");
+			DrawString(10, 200, "R을 눌러 다시 시작  ");   
 			break;
 		}
 		EndDraw();
