@@ -108,11 +108,6 @@ public class JustPicture extends GameFrame {
 		return p;
 	}
 	
-
-	
-	 public BackgroundRoad resetBackgroundRoad(BackgroundRoad e) { // 배경 위치의 초기화를 담당하는 함수입니다. 
-	 e.x = 0; e.y = -600; e.width = 400; e.height = 1200;
-	 return e; }
 	 
 
 	public void OneGamePlayTime(long time) { // 이번 게임의 플레이 시간 계산을 담당하는 함수입니다.
@@ -215,6 +210,7 @@ public class JustPicture extends GameFrame {
 		p = new Player();
 		bg1 = new BackgroundRoad();
 		bg2 = new BackgroundRoad();
+		bg2.y=-600;
 		item = new Item();
 		LoadBestGamePlayTime();
 	}
@@ -344,12 +340,12 @@ public class JustPicture extends GameFrame {
 			}
 
 			bg1.y += enemySpeed * 2;
-			if (bg1.y > 0) {
-				bg1.y = -600;
+			if (bg1.y > 600) {
+				bg1.y = -590;
 			}
 			bg2.y += enemySpeed * 2;
 			if (bg2.y > 600) {
-				bg2.y = 0;
+				bg2.y = -590;
 			}
 		}
 
