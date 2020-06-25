@@ -26,6 +26,14 @@ public class JustPicture extends GameFrame {
 		Running, // 게임이 시작된 상태
 		Finished // 게임 종료
 	}
+	enum ItemState{
+		exsist,
+		none
+	}
+	enum BeforeNine{
+		yes,
+		no
+	}
 
 	class Player extends DrawableObject {
 		public PlayerState state;
@@ -37,6 +45,18 @@ public class JustPicture extends GameFrame {
 			y = 500;
 			width = 50;
 			height = 50;
+			image = images.GetImage("player");
+
+		}
+	}
+	class Item extends DrawableObject {
+		public ItemState state;
+		public Item() // 사용자 캐릭터입니다.
+		{	state = ItemState.none;
+			x = 0;
+			y = 0;
+			width = 30;
+			height = 30;
 			image = images.GetImage("player");
 
 		}
@@ -62,7 +82,7 @@ public class JustPicture extends GameFrame {
 			x = 0;
 			y = 0;
 			width = 400;
-			height = 1200;
+			height = 620;
 			image = images.GetImage("road");
 		}
 	}
@@ -70,6 +90,12 @@ public class JustPicture extends GameFrame {
 	public boolean checkCrash(Player p, Enemy e) { // 충돌을 확인하는 함수입니다.
 		if (p.x + p.width >= e.x && p.x <= e.x + e.width)
 			if (p.y + p.height >= e.y && p.y <= e.y + e.height)
+				return true;
+		return false;
+	}
+	public boolean checkGetItem(Player p, Item i) { // 충돌을 확인하는 함수입니다.
+		if (p.x + p.width >= i.x && p.x <= i.x + i.width)
+			if (p.y + p.height >= i.y && p.y <= i.y + i.height)
 				return true;
 		return false;
 	}
@@ -81,8 +107,10 @@ public class JustPicture extends GameFrame {
 		p.height = 50;
 		return p;
 	}
+	
 
-	 public BackgroundRoad resetBackgroundRoad(BackgroundRoad e) { // 플레이어 위치의 초기화를 담당하는 함수입니다. 
+	
+	 public BackgroundRoad resetBackgroundRoad(BackgroundRoad e) { // 배경 위치의 초기화를 담당하는 함수입니다. 
 	 e.x = 0; e.y = -600; e.width = 400; e.height = 1200;
 	 return e; }
 	 
@@ -93,8 +121,7 @@ public class JustPicture extends GameFrame {
 		timeStamp_lastFrame = time; // 이제 '직전 프레임'이 될 이번 프레임의 시작 시각 기록
 		PlayTime = (int) (timeStamp_lastFrame - timeStamp_firstFrame) / 1000; // 플레이 시간 저장
 
-		if (PlayTime % 60 == 0 && OneSec != 0 && PlayTime != 0) { // 분,초 계산 // OneMin가 증가하는 것을 확인하기 위해 임의로 10진수로
-																	// 표시했습니다.=> 제출할때 60 진수로 변경
+		if (PlayTime % 60 == 0 && OneSec != 0 && PlayTime != 0) { // 분,초 계산
 			OneMin++;
 			OneSec = 0;
 		} else {
@@ -102,12 +129,14 @@ public class JustPicture extends GameFrame {
 		}
 	}
 
+	
 	public void BestGamePlayTime() { // BestGame을 갱신하는 메소드입니다.
+		System.out.println("갱신전 최고 시간은 : "+BestTime);
 		if (BestTime < PlayTime) {
 			
 			BestTime = PlayTime;
 			
-			if (BestTime >= 60) { // 분,초 계산 // BestMin가 증가하는 것을 확인하기 위해 임의로 10진수로 표시했습니다.=> 최종제출할때 60 진수로 변경
+			if (BestTime >= 60) { // 분,초 계산 
 				BestMin = BestTime / 60;
 				BestSec = BestTime % 60;
 			} else {
@@ -142,7 +171,7 @@ public class JustPicture extends GameFrame {
 		} catch (FileNotFoundException e) {
 			BestTime = PlayTime;
 		}
-		if (BestTime >= 60) { // 분,초 계산 // BestMin가 증가하는 것을 확인하기 위해 임의로 10진수로 표시했습니다.=> 최종제출할때 60 진수로 변경
+		if (BestTime >= 60) { // 분,초 계산 
 			BestMin = BestTime / 60;
 			BestSec = BestTime % 60;
 		} else {
@@ -152,8 +181,10 @@ public class JustPicture extends GameFrame {
 
 	Player p;
 	Enemy e;
-	BackgroundRoad bg;
-//	Bullet b;
+	BackgroundRoad bg1;
+	BackgroundRoad bg2;
+	Item item;
+	
 	GameState state = GameState.Started;
 	long timeStamp_firstFrame = 0; // 첫 프레임의 timeStamp -> 실행 이후로 경과된 시간 계산에 사용
 	long timeStamp_lastFrame = 0; // 직전 프레임의 timeStamp -> 물리량 계산에 사용
@@ -163,8 +194,10 @@ public class JustPicture extends GameFrame {
 	int BestTime; // 최고 기록 을 의미합니다
 	int BestSec; // 최고 기록 초를 의미합니다
 	int BestMin; // 최고 기록 분을 의미합니다
-	int enemySpeed; // 장애물의 스피드를 의미합니다.
+	int enemySpeed=10; // 장애물의 스피드를 의미합니다.
 	int numberOfEnemys = 5; // 장애물의 숫자
+	int timeForNando=0;
+	public BeforeNine state1=BeforeNine.no;
 	Enemy[] enemys = new Enemy[numberOfEnemys]; // 장애물이 들어있는 배열
 
 	public JustPicture(GameFrameSettings settings) {
@@ -180,7 +213,9 @@ public class JustPicture extends GameFrame {
 		inputs.BindKey(KeyEvent.VK_F, 4);
 		audios.LoadAudio("Audios/media.io_sound.wav", "sample", 1);
 		p = new Player();
-		bg = new BackgroundRoad();
+		bg1 = new BackgroundRoad();
+		bg2 = new BackgroundRoad();
+		item = new Item();
 		LoadBestGamePlayTime();
 	}
 
@@ -217,8 +252,10 @@ public class JustPicture extends GameFrame {
 					SaveBestGamePlayTime(); // 베스트 플레이를 저장합니다.
 					audios.Play("sample");
 					state = GameState.Finished;
+					item.state=ItemState.none;
 				}
 			}
+			
 			if (inputs.buttons[0].isPressed == true) { // a를 누르면 왼쪽으로 이동
 				p.state = PlayerState.Left;
 				break;
@@ -248,6 +285,7 @@ public class JustPicture extends GameFrame {
 				timeStamp_lastFrame = 0;
 				OneMin = 0;
 				OneSec = 0;
+				enemySpeed=10;
 				break;
 			}
 			break;
@@ -256,12 +294,37 @@ public class JustPicture extends GameFrame {
 
 		int speed = 10; // 좌 우로 움직이는 속도 조절
 		int rightMax = 350; // 우측으로의 최대 창 가로 크기 - 공 크기
-		enemySpeed = 10; // 적이 내려오는 속도
-		int nando = 1; // 1초에 증가하는 enemySpeed
+		
+		
+		if ((item.state==ItemState.exsist) && (checkGetItem(p, item)==true)) {
+			if (enemySpeed>4)
+				enemySpeed-=1;
+			item.state=ItemState.none;
+		}
 		if (state == GameState.Running) // 게임을 시작하면 장애물이 내려옴s
-		{
-			enemySpeed += nando * PlayTime / 10; // 10초에 속도 nando씩 증가
-
+		{	if (PlayTime%10==9)
+				state1=BeforeNine.yes;
+			else if ((state1==BeforeNine.yes) && (PlayTime % 10 == 0)){
+				enemySpeed+=2;
+				state1=BeforeNine.no;
+			}
+			 // 10초에 속도 nando씩 증가
+			
+			if (item.state == ItemState.none) {
+				if (random.nextInt(500)==1) {
+					item.y = 0;
+					item.x = random.nextInt(8) * item.width;
+					item.state = ItemState.exsist;
+				}
+			}
+			
+			else {
+				item.y+=enemySpeed;
+				if (item.y>600) item.state=ItemState.none;
+				
+			}
+			
+			
 			for (int i = 0; i < numberOfEnemys; ++i) {
 				if (enemys[i].e_y > 600) {
 					enemys[i].e_y = -100;
@@ -280,9 +343,13 @@ public class JustPicture extends GameFrame {
 				enemys[i].y = (int) enemys[i].e_y; // 계산한 값을 y에 대입합니다.
 			}
 
-			bg.y += enemySpeed * 2;
-			if (bg.y > 0) {
-				bg.y = -600;
+			bg1.y += enemySpeed * 2;
+			if (bg1.y > 0) {
+				bg1.y = -600;
+			}
+			bg2.y += enemySpeed * 2;
+			if (bg2.y > 600) {
+				bg2.y = 0;
 			}
 		}
 
@@ -318,7 +385,8 @@ public class JustPicture extends GameFrame {
 			DrawString(10, 70, "BestPlay : %4d: %4d", BestMin, BestSec);
 			break;
 		case Running:
-			bg.Draw(g);
+			bg1.Draw(g);
+			bg2.Draw(g);
 			if (PlayTime != 0 && PlayTime % 10 == 0) { // 10초마다 레벨 업 표시
 				DrawString(130, 90, "(Level Up!)");
 			}
@@ -326,6 +394,8 @@ public class JustPicture extends GameFrame {
 			DrawString(50, 50, "게임시작");
 			DrawString(50, 70, "Time %4d: %4d", OneMin, OneSec);
 			DrawString(50, 90, "Speed : %d", enemySpeed);
+			if(item.state==ItemState.exsist)
+				item.Draw(g);
 			p.Draw(g);
 			for (int i = 0; i < numberOfEnemys; ++i) { // 모든 장애물을 출력합니다.
 				enemys[i].Draw(g);
@@ -333,7 +403,8 @@ public class JustPicture extends GameFrame {
 
 			break;
 		case Finished:
-			bg.Draw(g);
+			bg1.Draw(g);
+			bg2.Draw(g);
 			p.Draw(g);
 			for (int i = 0; i < numberOfEnemys; ++i) { // 모든 장애물을 출력합니다.
 				enemys[i].Draw(g);
@@ -349,3 +420,4 @@ public class JustPicture extends GameFrame {
 	}
 
 }
+
