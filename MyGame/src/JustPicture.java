@@ -15,16 +15,16 @@ import loot.graphics.DrawableObject;
 @SuppressWarnings("serial")
 public class JustPicture extends GameFrame {
 	enum PlayerState {
-		Normal, // ì•„ë¬´ ë²„íŠ¼ë„ ì•ˆ ëˆ„ë¦„
-		Left, // ì™¼ìª½
-		Right // ì˜¤ë¥¸ìª½
+		Normal, // ¾Æ¹« ¹öÆ°µµ ¾È ´©¸§
+		Left, // ¿ŞÂÊ
+		Right // ¿À¸¥ÂÊ
 	}
 
 	enum GameState {
-		Started, // ê²Œì„ì´ ì•„ì§ ì‹œì‘ë˜ì§€ ì•Šì€ ìƒíƒœ
-		Ready, // ìŠ¤í˜ì´ìŠ¤ë°”ë¥¼ ëˆ„ë¥¸ ìƒíƒœ
-		Running, // ê²Œì„ì´ ì‹œì‘ëœ ìƒíƒœ
-		Finished // ê²Œì„ ì¢…ë£Œ
+		Started, // °ÔÀÓÀÌ ¾ÆÁ÷ ½ÃÀÛµÇÁö ¾ÊÀº »óÅÂ
+		Ready, // ½ºÆäÀÌ½º¹Ù¸¦ ´©¸¥ »óÅÂ
+		Running, // °ÔÀÓÀÌ ½ÃÀÛµÈ »óÅÂ
+		Finished // °ÔÀÓ Á¾·á
 	}
 	enum ItemState{
 		exsist,
@@ -38,7 +38,7 @@ public class JustPicture extends GameFrame {
 	class Player extends DrawableObject {
 		public PlayerState state;
 
-		public Player() // ì‚¬ìš©ì ìºë¦­í„°ì…ë‹ˆë‹¤.
+		public Player() // »ç¿ëÀÚ Ä³¸¯ÅÍÀÔ´Ï´Ù.
 		{
 			state = PlayerState.Normal;
 			x = 150;
@@ -51,7 +51,7 @@ public class JustPicture extends GameFrame {
 	}
 	class Item extends DrawableObject {
 		public ItemState state;
-		public Item() // ì‚¬ìš©ì ìºë¦­í„°ì…ë‹ˆë‹¤.
+		public Item() // »ç¿ëÀÚ Ä³¸¯ÅÍÀÔ´Ï´Ù.
 		{	state = ItemState.none;
 			x = 0;
 			y = 0;
@@ -62,22 +62,22 @@ public class JustPicture extends GameFrame {
 		}
 	}
 
-	static final int Enemy_width = 50; // ì¥ì• ë¬¼ì˜ ê°€ë¡œ ê¸¸ì´(ë‹¨ìœ„ëŠ” í”½ì…€)
-	static final int Enemy_heigth = 100; // ì¥ì• ë¬¼ì˜ ì„¸ë¡œ ê¸¸ì´(ë‹¨ìœ„ëŠ” í”½ì…€)
+	static final int Enemy_width = 50; // Àå¾Ö¹°ÀÇ °¡·Î ±æÀÌ(´ÜÀ§´Â ÇÈ¼¿)
+	static final int Enemy_heigth = 100; // Àå¾Ö¹°ÀÇ ¼¼·Î ±æÀÌ(´ÜÀ§´Â ÇÈ¼¿)
 
 	class Enemy extends DrawableObject {
 
 		public double e_x;
 		public double e_y;
 
-		public Enemy(int x, int y) { // ì¥ì• ë¬¼ ìƒì„±ì
+		public Enemy(int x, int y) { // Àå¾Ö¹° »ı¼ºÀÚ
 			super(x, y, Enemy_width, Enemy_heigth, images.GetImage("enemy"));
 			e_x = x;
 			e_y = y;
 		}
 	}
 
-	class BackgroundRoad extends DrawableObject { // ë°°ê²½ì˜ ì›€ì§ì„ì„ ìœ„í•´ ì¶”ê°€ë¨
+	class BackgroundRoad extends DrawableObject { // ¹è°æÀÇ ¿òÁ÷ÀÓÀ» À§ÇØ Ãß°¡µÊ
 		public BackgroundRoad() {
 			x = 0;
 			y = 0;
@@ -87,20 +87,20 @@ public class JustPicture extends GameFrame {
 		}
 	}
 
-	public boolean checkCrash(Player p, Enemy e) { // ì¶©ëŒì„ í™•ì¸í•˜ëŠ” í•¨ìˆ˜ì…ë‹ˆë‹¤.
+	public boolean checkCrash(Player p, Enemy e) { // Ãæµ¹À» È®ÀÎÇÏ´Â ÇÔ¼öÀÔ´Ï´Ù.
 		if (p.x + p.width >= e.x && p.x <= e.x + e.width)
 			if (p.y + p.height >= e.y && p.y <= e.y + e.height)
 				return true;
 		return false;
 	}
-	public boolean checkGetItem(Player p, Item i) { // ì¶©ëŒì„ í™•ì¸í•˜ëŠ” í•¨ìˆ˜ì…ë‹ˆë‹¤.
+	public boolean checkGetItem(Player p, Item i) { // Ãæµ¹À» È®ÀÎÇÏ´Â ÇÔ¼öÀÔ´Ï´Ù.
 		if (p.x + p.width >= i.x && p.x <= i.x + i.width)
 			if (p.y + p.height >= i.y && p.y <= i.y + i.height)
 				return true;
 		return false;
 	}
 
-	public Player resetPlayer(Player p) { // í”Œë ˆì´ì–´ ìœ„ì¹˜ì˜ ì´ˆê¸°í™”ë¥¼ ë‹´ë‹¹í•˜ëŠ” í•¨ìˆ˜ì…ë‹ˆë‹¤.
+	public Player resetPlayer(Player p) { // ÇÃ·¹ÀÌ¾î À§Ä¡ÀÇ ÃÊ±âÈ­¸¦ ´ã´çÇÏ´Â ÇÔ¼öÀÔ´Ï´Ù.
 		p.x = 150;
 		p.y = 500;
 		p.width = 50;
@@ -108,19 +108,19 @@ public class JustPicture extends GameFrame {
 		return p;
 	}
 	
-	public BackgroundRoad resetBackgroundRoad(BackgroundRoad e, int ynum) { // ë°°ê²½ ìœ„ì¹˜ì˜ ì´ˆê¸°í™”ë¥¼ ë‹´ë‹¹í•˜ëŠ” í•¨ìˆ˜ì…ë‹ˆë‹¤. 
+	public BackgroundRoad resetBackgroundRoad(BackgroundRoad e, int ynum) { // ¹è°æ À§Ä¡ÀÇ ÃÊ±âÈ­¸¦ ´ã´çÇÏ´Â ÇÔ¼öÀÔ´Ï´Ù. 
 		 e.x = 0; e.y = ynum;
 		 return e; }
 	
 	 
 
-	public void OneGamePlayTime(long time) { // ì´ë²ˆ ê²Œì„ì˜ í”Œë ˆì´ ì‹œê°„ ê³„ì‚°ì„ ë‹´ë‹¹í•˜ëŠ” í•¨ìˆ˜ì…ë‹ˆë‹¤.
-		if (timeStamp_firstFrame == 0) // ì´ë²ˆì´ ì²« í”„ë ˆì„ì´ì—ˆë‹¤ë©´ ì‹œì‘ ì‹œê° ê¸°ë¡
+	public void OneGamePlayTime(long time) { // ÀÌ¹ø °ÔÀÓÀÇ ÇÃ·¹ÀÌ ½Ã°£ °è»êÀ» ´ã´çÇÏ´Â ÇÔ¼öÀÔ´Ï´Ù.
+		if (timeStamp_firstFrame == 0) // ÀÌ¹øÀÌ Ã¹ ÇÁ·¹ÀÓÀÌ¾ú´Ù¸é ½ÃÀÛ ½Ã°¢ ±â·Ï
 			timeStamp_firstFrame = time;
-		timeStamp_lastFrame = time; // ì´ì œ 'ì§ì „ í”„ë ˆì„'ì´ ë  ì´ë²ˆ í”„ë ˆì„ì˜ ì‹œì‘ ì‹œê° ê¸°ë¡
-		PlayTime = (int) (timeStamp_lastFrame - timeStamp_firstFrame) / 1000; // í”Œë ˆì´ ì‹œê°„ ì €ì¥
+		timeStamp_lastFrame = time; // ÀÌÁ¦ 'Á÷Àü ÇÁ·¹ÀÓ'ÀÌ µÉ ÀÌ¹ø ÇÁ·¹ÀÓÀÇ ½ÃÀÛ ½Ã°¢ ±â·Ï
+		PlayTime = (int) (timeStamp_lastFrame - timeStamp_firstFrame) / 1000; // ÇÃ·¹ÀÌ ½Ã°£ ÀúÀå
 
-		if (PlayTime % 60 == 0 && OneSec != 0 && PlayTime != 0) { // ë¶„,ì´ˆ ê³„ì‚°
+		if (PlayTime % 60 == 0 && OneSec != 0 && PlayTime != 0) { // ºĞ,ÃÊ °è»ê
 			OneMin++;
 			OneSec = 0;
 		} else {
@@ -129,12 +129,12 @@ public class JustPicture extends GameFrame {
 	}
 
 	
-	public void BestGamePlayTime() { // BestGameì„ ê°±ì‹ í•˜ëŠ” ë©”ì†Œë“œì…ë‹ˆë‹¤.
+	public void BestGamePlayTime() { // BestGameÀ» °»½ÅÇÏ´Â ¸Ş¼ÒµåÀÔ´Ï´Ù.
 		if (BestTime < PlayTime) {
 			
 			BestTime = PlayTime;
 			
-			if (BestTime >= 60) { // ë¶„,ì´ˆ ê³„ì‚° 
+			if (BestTime >= 60) { // ºĞ,ÃÊ °è»ê 
 				BestMin = BestTime / 60;
 				BestSec = BestTime % 60;
 			} else {
@@ -143,9 +143,9 @@ public class JustPicture extends GameFrame {
 		}
 	}
 
-	String filename_save = "besttime.txt"; // BestGameì˜ ì‹œê°„ì„ ì €ì¥í•˜ëŠ” íŒŒì¼ì…ë‹ˆë‹¤.
+	String filename_save = "besttime.txt"; // BestGameÀÇ ½Ã°£À» ÀúÀåÇÏ´Â ÆÄÀÏÀÔ´Ï´Ù.
 
-	public void SaveBestGamePlayTime() // BestGameì˜ ì‹œê°„ì„ ì €ì¥í•˜ëŠ” ë©”ì†Œë“œì…ë‹ˆë‹¤. ì´ ë©”ì†Œë“œëŠ” Runningì´ ì¢…ë£Œë˜ê¸° ì§ì „ì— ë¶ˆëŸ¬ì˜µë‹ˆë‹¤.
+	public void SaveBestGamePlayTime() // BestGameÀÇ ½Ã°£À» ÀúÀåÇÏ´Â ¸Ş¼ÒµåÀÔ´Ï´Ù. ÀÌ ¸Ş¼Òµå´Â RunningÀÌ Á¾·áµÇ±â Á÷Àü¿¡ ºÒ·¯¿É´Ï´Ù.
 	{
 		PrintStream ps;
 		try {
@@ -156,7 +156,7 @@ public class JustPicture extends GameFrame {
 		}
 	}
 
-	public void LoadBestGamePlayTime() // ì§€ë‚œ ê²Œì„ì˜ BestPlayTimeì„ ë¶ˆëŸ¬ì˜¤ëŠ” ë©”ì†Œë“œì…ë‹ˆë‹¤. ì´ ë©”ì†Œë“œëŠ” ê²Œì„ì´ ì‹œì‘ë˜ê¸° ì „, í”„ë¡œê·¸ë¨ì´ ì‹œì‘ëœ í›„ í•œë²ˆë§Œ ë¶ˆëŸ¬ì˜µë‹ˆë‹¤.
+	public void LoadBestGamePlayTime() // Áö³­ °ÔÀÓÀÇ BestPlayTimeÀ» ºÒ·¯¿À´Â ¸Ş¼ÒµåÀÔ´Ï´Ù. ÀÌ ¸Ş¼Òµå´Â °ÔÀÓÀÌ ½ÃÀÛµÇ±â Àü, ÇÁ·Î±×·¥ÀÌ ½ÃÀÛµÈ ÈÄ ÇÑ¹ø¸¸ ºÒ·¯¿É´Ï´Ù.
 	{
 		FileInputStream is;
 		PlayTime = 0;
@@ -169,7 +169,7 @@ public class JustPicture extends GameFrame {
 		} catch (FileNotFoundException e) {
 			BestTime = PlayTime;
 		}
-		if (BestTime >= 60) { // ë¶„,ì´ˆ ê³„ì‚° 
+		if (BestTime >= 60) { // ºĞ,ÃÊ °è»ê 
 			BestMin = BestTime / 60;
 			BestSec = BestTime % 60;
 		} else {
@@ -181,22 +181,23 @@ public class JustPicture extends GameFrame {
 	Enemy e;
 	BackgroundRoad bg1;
 	BackgroundRoad bg2;
+	BackgroundRoad bg3;
 	Item item;
 	
 	GameState state = GameState.Started;
-	long timeStamp_firstFrame = 0; // ì²« í”„ë ˆì„ì˜ timeStamp -> ì‹¤í–‰ ì´í›„ë¡œ ê²½ê³¼ëœ ì‹œê°„ ê³„ì‚°ì— ì‚¬ìš©
-	long timeStamp_lastFrame = 0; // ì§ì „ í”„ë ˆì„ì˜ timeStamp -> ë¬¼ë¦¬ëŸ‰ ê³„ì‚°ì— ì‚¬ìš©
-	int PlayTime = 0; // í”Œë ˆì´ ì‹œê°„ì„ ë§í•˜ê³  ìˆìŠµë‹ˆë‹¤
-	int OneSec = 0; // í”Œë ˆì´ ì‹œê°„ ì´ˆë‹¨ìœ„
-	int OneMin = 0; // í”Œë ˆì´ ì‹œê°„ ë¶„ë‹¨ìœ„
-	int BestTime; // ìµœê³  ê¸°ë¡ ì„ ì˜ë¯¸í•©ë‹ˆë‹¤
-	int BestSec; // ìµœê³  ê¸°ë¡ ì´ˆë¥¼ ì˜ë¯¸í•©ë‹ˆë‹¤
-	int BestMin; // ìµœê³  ê¸°ë¡ ë¶„ì„ ì˜ë¯¸í•©ë‹ˆë‹¤
-	int enemySpeed=10; // ì¥ì• ë¬¼ì˜ ìŠ¤í”¼ë“œë¥¼ ì˜ë¯¸í•©ë‹ˆë‹¤.
-	int numberOfEnemys = 5; // ì¥ì• ë¬¼ì˜ ìˆ«ì
+	long timeStamp_firstFrame = 0; // Ã¹ ÇÁ·¹ÀÓÀÇ timeStamp -> ½ÇÇà ÀÌÈÄ·Î °æ°úµÈ ½Ã°£ °è»ê¿¡ »ç¿ë
+	long timeStamp_lastFrame = 0; // Á÷Àü ÇÁ·¹ÀÓÀÇ timeStamp -> ¹°¸®·® °è»ê¿¡ »ç¿ë
+	int PlayTime = 0; // ÇÃ·¹ÀÌ ½Ã°£À» ¸»ÇÏ°í ÀÖ½À´Ï´Ù
+	int OneSec = 0; // ÇÃ·¹ÀÌ ½Ã°£ ÃÊ´ÜÀ§
+	int OneMin = 0; // ÇÃ·¹ÀÌ ½Ã°£ ºĞ´ÜÀ§
+	int BestTime; // ÃÖ°í ±â·Ï À» ÀÇ¹ÌÇÕ´Ï´Ù
+	int BestSec; // ÃÖ°í ±â·Ï ÃÊ¸¦ ÀÇ¹ÌÇÕ´Ï´Ù
+	int BestMin; // ÃÖ°í ±â·Ï ºĞÀ» ÀÇ¹ÌÇÕ´Ï´Ù
+	int enemySpeed=10; // Àå¾Ö¹°ÀÇ ½ºÇÇµå¸¦ ÀÇ¹ÌÇÕ´Ï´Ù.
+	int numberOfEnemys = 5; // Àå¾Ö¹°ÀÇ ¼ıÀÚ
 	int timeForNando=0;
 	public BeforeNine state1=BeforeNine.no;
-	Enemy[] enemys = new Enemy[numberOfEnemys]; // ì¥ì• ë¬¼ì´ ë“¤ì–´ìˆëŠ” ë°°ì—´
+	Enemy[] enemys = new Enemy[numberOfEnemys]; // Àå¾Ö¹°ÀÌ µé¾îÀÖ´Â ¹è¿­
 
 	public JustPicture(GameFrameSettings settings) {
 		super(settings);
@@ -213,7 +214,8 @@ public class JustPicture extends GameFrame {
 		p = new Player();
 		bg1 = new BackgroundRoad();
 		bg2 = new BackgroundRoad();
-		bg2.y=-600;
+		bg3 = new BackgroundRoad();
+		bg2.y=-590;
 		item = new Item();
 		LoadBestGamePlayTime();
 	}
@@ -222,7 +224,7 @@ public class JustPicture extends GameFrame {
 		Random random = new Random();
 		for (int i = 0; i < enemys.length; ++i) {
 			int x = random.nextInt(8) * Enemy_width;
-			enemys[i] = new Enemy(x, -300 * i); // ì¥ì• ë¬¼ì„ xìë¦¬ ëœë¤, yìë¦¬ -100ìœ¼ë¡œ ìƒì„±ë©ë‹ˆë‹¤.
+			enemys[i] = new Enemy(x, -300 * i); // Àå¾Ö¹°À» xÀÚ¸® ·£´ı, yÀÚ¸® -100À¸·Î »ı¼ºµË´Ï´Ù.
 
 		}
 		
@@ -237,7 +239,7 @@ public class JustPicture extends GameFrame {
 		case Started:
 
 		case Ready:
-			if (inputs.buttons[2].IsPressedNow() == true) // space ë¥¼ ëˆ„ë¥´ë©´ ê²Œì„ì‹œì‘
+			if (inputs.buttons[2].IsPressedNow() == true) // space ¸¦ ´©¸£¸é °ÔÀÓ½ÃÀÛ
 				state = GameState.Running;
 			break;
 
@@ -245,25 +247,25 @@ public class JustPicture extends GameFrame {
 			OneGamePlayTime(timeStamp);
 			p.state = PlayerState.Normal;
 			for (int i = 0; i < numberOfEnemys; ++i) {
-				if (checkCrash(p, enemys[i]) == true) // ì¥ì• ë¬¼ì— ë¶€ë”ªíˆë©´ ê²Œì„ ì¢…ë£Œ
+				if (checkCrash(p, enemys[i]) == true) // Àå¾Ö¹°¿¡ ºÎµúÈ÷¸é °ÔÀÓ Á¾·á
 				{
-					BestGamePlayTime(); // ë² ìŠ¤íŠ¸ í”Œë ˆì´ë¥¼ ê°±ì‹ í•©ë‹ˆë‹¤.
-					SaveBestGamePlayTime(); // ë² ìŠ¤íŠ¸ í”Œë ˆì´ë¥¼ ì €ì¥í•©ë‹ˆë‹¤.
+					BestGamePlayTime(); // º£½ºÆ® ÇÃ·¹ÀÌ¸¦ °»½ÅÇÕ´Ï´Ù.
+					SaveBestGamePlayTime(); // º£½ºÆ® ÇÃ·¹ÀÌ¸¦ ÀúÀåÇÕ´Ï´Ù.
 					audios.Play("sample");
 					state = GameState.Finished;
 					item.state=ItemState.none;
 				}
 			}
-			if ((inputs.buttons[0].isPressed == true) && (inputs.buttons[1].isPressed == true)){ // aë¥¼ ëˆ„ë¥´ë©´ ì™¼ìª½ìœ¼ë¡œ ì´ë™
+			if ((inputs.buttons[0].isPressed == true) && (inputs.buttons[1].isPressed == true)){ // a¸¦ ´©¸£¸é ¿ŞÂÊÀ¸·Î ÀÌµ¿
 				p.state = PlayerState.Normal;
 				break;
 			}
 			
-			if (inputs.buttons[0].isPressed == true) { // aë¥¼ ëˆ„ë¥´ë©´ ì™¼ìª½ìœ¼ë¡œ ì´ë™
+			if (inputs.buttons[0].isPressed == true) { // a¸¦ ´©¸£¸é ¿ŞÂÊÀ¸·Î ÀÌµ¿
 				p.state = PlayerState.Left;
 				break;
 			}
-			else if (inputs.buttons[1].isPressed == true) { // dë¥¼ ëˆ„ë¥´ë©´ ì˜¤ë¥¸ìª½ìœ¼ë¡œ ì´ë™
+			else if (inputs.buttons[1].isPressed == true) { // d¸¦ ´©¸£¸é ¿À¸¥ÂÊÀ¸·Î ÀÌµ¿
 				p.state = PlayerState.Right;
 				break;
 			}
@@ -273,20 +275,20 @@ public class JustPicture extends GameFrame {
 			}
 			
 		case Finished:
-			p.state = PlayerState.Normal; // ê²Œì„ì´ ëë‚˜ë©´ ê³µì„ ë©ˆì¶¤
-			if (inputs.buttons[4].isPressed == true) {  //fë¥¼ ëˆ„ë¥´ë©´  ë² ìŠ¤íŠ¸íƒ€ì„ì„ ë¦¬ì…‹í•©ë‹ˆë‹¤.
+			p.state = PlayerState.Normal; // °ÔÀÓÀÌ ³¡³ª¸é °øÀ» ¸ØÃã
+			if (inputs.buttons[4].isPressed == true) {  //f¸¦ ´©¸£¸é  º£½ºÆ®Å¸ÀÓÀ» ¸®¼ÂÇÕ´Ï´Ù.
 				BestTime = 0;
 				BestMin = 0;
 				BestSec = 0;
-				SaveBestGamePlayTime(); // ë² ìŠ¤íŠ¸ í”Œë ˆì´ë¥¼ ì €ì¥í•©ë‹ˆë‹¤.
+				SaveBestGamePlayTime(); // º£½ºÆ® ÇÃ·¹ÀÌ¸¦ ÀúÀåÇÕ´Ï´Ù.
 			}
-			if (inputs.buttons[3].isPressed == true) { // rì„ ëˆ„ë¥´ë©´ ì‹œì‘í•˜ê¸° ì „ìœ¼ë¡œ ëŒì•„ê°€ê¸°
+			if (inputs.buttons[3].isPressed == true) { // rÀ» ´©¸£¸é ½ÃÀÛÇÏ±â ÀüÀ¸·Î µ¹¾Æ°¡±â
 				state = GameState.Started;
 				p = resetPlayer(p);
 				bg1=resetBackgroundRoad(bg1, 10);
 				bg2=resetBackgroundRoad(bg2, -590);
 				Initialize();
-				timeStamp_firstFrame = 0; // ì‹œê°„ ì´ˆê¸°í™”
+				timeStamp_firstFrame = 0; // ½Ã°£ ÃÊ±âÈ­
 				timeStamp_lastFrame = 0;
 				OneMin = 0;
 				OneSec = 0;
@@ -297,23 +299,23 @@ public class JustPicture extends GameFrame {
 
 		}
 
-		int speed = 10; // ì¢Œ ìš°ë¡œ ì›€ì§ì´ëŠ” ì†ë„ ì¡°ì ˆ
-		int rightMax = 350; // ìš°ì¸¡ìœ¼ë¡œì˜ ìµœëŒ€ ì°½ ê°€ë¡œ í¬ê¸° - ê³µ í¬ê¸°
+		int speed = 10; // ÁÂ ¿ì·Î ¿òÁ÷ÀÌ´Â ¼Óµµ Á¶Àı
+		int rightMax = 350; // ¿ìÃøÀ¸·ÎÀÇ ÃÖ´ë Ã¢ °¡·Î Å©±â - °ø Å©±â
 		
 		
 		if ((item.state==ItemState.exsist) && (checkGetItem(p, item)==true)) {
-			if (enemySpeed>4)
+			if (enemySpeed>8)
 				enemySpeed-=1;
 			item.state=ItemState.none;
 		}
-		if (state == GameState.Running) // ê²Œì„ì„ ì‹œì‘í•˜ë©´ ì¥ì• ë¬¼ì´ ë‚´ë ¤ì˜´s
+		if (state == GameState.Running) // °ÔÀÓÀ» ½ÃÀÛÇÏ¸é Àå¾Ö¹°ÀÌ ³»·Á¿Ès
 		{	if (PlayTime%10==9)
 				state1=BeforeNine.yes;
 			else if ((state1==BeforeNine.yes) && (PlayTime % 10 == 0)){
-				enemySpeed+=2;
+				enemySpeed+=4;
 				state1=BeforeNine.no;
 			}
-			 // 10ì´ˆì— ì†ë„ nandoì”© ì¦ê°€
+			 // 10ÃÊ¿¡ ¼Óµµ nando¾¿ Áõ°¡
 			
 			if (item.state == ItemState.none) {
 				if (random.nextInt(500)==1) {
@@ -336,29 +338,30 @@ public class JustPicture extends GameFrame {
 					enemys[i].e_x = random.nextInt(8) * Enemy_width;
 				}
 
-				// ì „ ì¥ì• ë¬¼ê³¼ 150 ì´ìƒ ê°„ê²©ì´ ë–¨ì–´ì ¸ ìˆëŠ”ì§€ í™•ì¸í•œ í›„ ìƒˆë¡œìš´ ì¥ì• ë¬¼ì„ ì¶œë ¥í•©ë‹ˆë‹¤.
+				// Àü Àå¾Ö¹°°ú 150 ÀÌ»ó °£°İÀÌ ¶³¾îÁ® ÀÖ´ÂÁö È®ÀÎÇÑ ÈÄ »õ·Î¿î Àå¾Ö¹°À» Ãâ·ÂÇÕ´Ï´Ù.
 				if (i == 0 && enemys[i].e_y <= enemys[numberOfEnemys - 1].e_y && enemys[numberOfEnemys - 1].e_y < 150)
 					enemys[0].e_y = -100;
 				else if (i != 0 && enemys[i].e_y <= enemys[i - 1].e_y && enemys[i - 1].e_y < 150)
 					enemys[i].e_y = -100;
 				else
-					enemys[i].e_y += enemySpeed; // ì¥ì• ë¬¼ì´ ë‚´ë ¤ì˜¤ëŠ” ì†ë„ëŠ” ë‚œì´ë„ë¥¼ ê³ ë ¤í•©ë‹ˆë‹¤.
+					enemys[i].e_y += enemySpeed; // Àå¾Ö¹°ÀÌ ³»·Á¿À´Â ¼Óµµ´Â ³­ÀÌµµ¸¦ °í·ÁÇÕ´Ï´Ù.
 
-				enemys[i].x = (int) enemys[i].e_x; // ê³„ì‚°í•œ ê°’ì„ xì— ëŒ€ì…í•©ë‹ˆë‹¤.
-				enemys[i].y = (int) enemys[i].e_y; // ê³„ì‚°í•œ ê°’ì„ yì— ëŒ€ì…í•©ë‹ˆë‹¤.
+				enemys[i].x = (int) enemys[i].e_x; // °è»êÇÑ °ªÀ» x¿¡ ´ëÀÔÇÕ´Ï´Ù.
+				enemys[i].y = (int) enemys[i].e_y; // °è»êÇÑ °ªÀ» y¿¡ ´ëÀÔÇÕ´Ï´Ù.
 			}
 
-			bg1.y += enemySpeed * 2;
+			bg1.y += enemySpeed*2;
 			if (bg1.y > 600) {
 				bg1.y = -590;
 			}
-			bg2.y += enemySpeed * 2;
+			bg2.y += enemySpeed*2;
 			if (bg2.y > 600) {
 				bg2.y = -590;
 			}
+			
 		}
 
-		switch (p.state) { // ìºë¦­í„°ì˜ ì›€ì§ì„ì„ ì¶œë ¥í•©ë‹ˆë‹¤.
+		switch (p.state) { // Ä³¸¯ÅÍÀÇ ¿òÁ÷ÀÓÀ» Ãâ·ÂÇÕ´Ï´Ù.
 		case Normal:
 			break;
 		case Left:
@@ -380,49 +383,49 @@ public class JustPicture extends GameFrame {
 		BeginDraw();
 		ClearScreen();
 
-		
-
 		switch (state) {
 		case Started:
 		case Ready:
-			DrawString(10, 30, "Spaceë¥¼ ëˆŒëŸ¬ ê²Œì„ì„ ì‹œì‘í•©ë‹ˆë‹¤  ");
-			DrawString(10, 50, "a, dë¥¼ ëˆŒëŸ¬ ì¢Œìš°ë¡œ ì›€ì§ì´ì„¸ìš”");
+			DrawString(10, 30, "Space¸¦ ´­·¯ °ÔÀÓÀ» ½ÃÀÛÇÕ´Ï´Ù  ");
+			DrawString(10, 50, "a, d¸¦ ´­·¯ ÁÂ¿ì·Î ¿òÁ÷ÀÌ¼¼¿ä");
 			DrawString(10, 70, "BestPlay : %4d: %4d", BestMin, BestSec);
 			break;
 		case Running:
+			bg3.Draw(g);
 			bg1.Draw(g);
 			bg2.Draw(g);
-			if (PlayTime != 0 && PlayTime % 10 == 0) { // 10ì´ˆë§ˆë‹¤ ë ˆë²¨ ì—… í‘œì‹œ
+			if (PlayTime != 0 && PlayTime % 10 == 0) { // 10ÃÊ¸¶´Ù ·¹º§ ¾÷ Ç¥½Ã
 				DrawString(130, 90, "(Level Up!)");
 			}
-			DrawString(50, 30, "ìµœëŒ€í•œ ì˜¤ë˜ ë²„í…¨ë³´ì„¸ìš”  ");
-			DrawString(50, 50, "ê²Œì„ì‹œì‘");
+			DrawString(50, 30, "ÃÖ´ëÇÑ ¿À·¡ ¹öÅßº¸¼¼¿ä  ");
+			DrawString(50, 50, "°ÔÀÓ½ÃÀÛ");
 			DrawString(50, 70, "Time %4d: %4d", OneMin, OneSec);
 			DrawString(50, 90, "Speed : %d", enemySpeed);
 			if(item.state==ItemState.exsist)
 				item.Draw(g);
 			p.Draw(g);
-			for (int i = 0; i < numberOfEnemys; ++i) { // ëª¨ë“  ì¥ì• ë¬¼ì„ ì¶œë ¥í•©ë‹ˆë‹¤.
+			for (int i = 0; i < numberOfEnemys; ++i) { // ¸ğµç Àå¾Ö¹°À» Ãâ·ÂÇÕ´Ï´Ù.
 				enemys[i].Draw(g);
 			}
 
 			break;
 		case Finished:
+			bg3.Draw(g);
 			bg1.Draw(g);
 			bg2.Draw(g);
+
 			p.Draw(g);
-			for (int i = 0; i < numberOfEnemys; ++i) { // ëª¨ë“  ì¥ì• ë¬¼ì„ ì¶œë ¥í•©ë‹ˆë‹¤.
+			for (int i = 0; i < numberOfEnemys; ++i) { // ¸ğµç Àå¾Ö¹°À» Ãâ·ÂÇÕ´Ï´Ù.
 				enemys[i].Draw(g);
 			}  
-			DrawString(50, 30, "ì¶©ëŒí–ˆì–´ìš” "); // ì¶©ëŒì‹œ ì ì‹œ ì¶©ëŒ í–ˆë‹¤ê³  ì¶œë ¥
+			DrawString(50, 30, "Ãæµ¹Çß¾î¿ä "); // Ãæµ¹½Ã Àá½Ã Ãæµ¹ Çß´Ù°í Ãâ·Â
 			DrawString(50, 70, "Time %2d : %2d", OneMin, OneSec);
 			DrawString(50, 90, "BestPlay : %2d: %2d", BestMin, BestSec);
-			DrawString(50, 150, "Fë¥¼ ëˆ„ë¥´ë©´ BestPlayê°€ ì´ˆê¸°í™” ë©ë‹ˆë‹¤.");
-			DrawString(50, 170, "Rì„ ëˆŒëŸ¬ ë‹¤ì‹œ ì‹œì‘  ");   
+			DrawString(50, 150, "F¸¦ ´©¸£¸é BestPlay°¡ ÃÊ±âÈ­ µË´Ï´Ù.");
+			DrawString(50, 170, "RÀ» ´­·¯ ´Ù½Ã ½ÃÀÛ  ");   
 			break;
 		}
 		EndDraw();
 	}
 
 }
-
