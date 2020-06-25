@@ -108,6 +108,10 @@ public class JustPicture extends GameFrame {
 		return p;
 	}
 	
+	public BackgroundRoad resetBackgroundRoad(BackgroundRoad e, int ynum) { // 배경 위치의 초기화를 담당하는 함수입니다. 
+		 e.x = 0; e.y = ynum;
+		 return e; }
+	
 	 
 
 	public void OneGamePlayTime(long time) { // 이번 게임의 플레이 시간 계산을 담당하는 함수입니다.
@@ -173,7 +177,7 @@ public class JustPicture extends GameFrame {
 			BestSec = BestTime % 60;
 		}
 	}
-
+	
 	Player p;
 	Enemy e;
 	BackgroundRoad bg1;
@@ -251,6 +255,10 @@ public class JustPicture extends GameFrame {
 					item.state=ItemState.none;
 				}
 			}
+			if ((inputs.buttons[0].isPressed == true) && (inputs.buttons[1].isPressed == true)){ // a를 누르면 왼쪽으로 이동
+				p.state = PlayerState.Normal;
+				break;
+			}
 			
 			if (inputs.buttons[0].isPressed == true) { // a를 누르면 왼쪽으로 이동
 				p.state = PlayerState.Left;
@@ -276,6 +284,8 @@ public class JustPicture extends GameFrame {
 			if (inputs.buttons[3].isPressed == true) { // r을 누르면 시작하기 전으로 돌아가기
 				state = GameState.Started;
 				p = resetPlayer(p);
+				bg1=resetBackgroundRoad(bg1, 10);
+				bg2=resetBackgroundRoad(bg2, -590);
 				Initialize();
 				timeStamp_firstFrame = 0; // 시간 초기화
 				timeStamp_lastFrame = 0;
